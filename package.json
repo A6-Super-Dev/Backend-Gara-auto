@@ -50,7 +50,7 @@
     "express-validation": "^3.0.8",
     "express-winston": "^4.2.0",
     "googleapis": "^92.0.0",
-    "helmet": "^5.0.1",
+    "helmet": "^5.0.2",
     "http-status": "^1.5.0",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
