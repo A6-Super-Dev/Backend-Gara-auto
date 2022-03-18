@@ -59,7 +59,7 @@
     "multer": "^1.4.4",
     "mysql2": "^2.3.3",
     "prettier": "^2.5.1",
-    "sequelize": "^6.16.2",
+    "sequelize": "^6.16.3",
     "sequelize-cli": "^6.3.0",
     "stripe": "^8.209.0",
     "tedious": "^14.3.0",
