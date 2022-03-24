@@ -61,7 +61,7 @@
     "mysql2": "^2.3.3",
     "node-schedule": "^2.1.0",
     "prettier": "^2.5.1",
-    "sequelize": "^6.16.2",
+    "sequelize": "^6.17.0",
     "sequelize-cli": "^6.3.0",
     "stripe": "^8.209.0",
     "tedious": "^14.3.0",
