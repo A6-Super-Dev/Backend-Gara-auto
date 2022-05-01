@@ -27,6 +27,7 @@ import { compareDate1GreaterDate2 } from '../../../common/helpers/dateTime';
 import GoogleRecaptchaService from '../../../common/services/GoogleRecaptchaService';
 import ClientModel from '../../../common/models/ClientModel';
 import generator from 'generate-password';
+import DiceBearService from '../../../common/services/DiceBearService';
 
 class TokenServices {
   protected generateToken = async (email: string, type: TokenType) => {
@@ -163,28 +164,36 @@ class TokenServices {
       roles,
       recent_login_time: null,
     });
-    // console.log('newUser', newUser);
 
     const token = sign({ email: newUser.email }, env.jwtSecret);
-    // console.log('token', token);
+
+    let fileName = null;
+    if (firstName || lastName) {
+      fileName = firstName + lastName;
+    }
+
+    const avatar = await DiceBearService.getRandomAvatarByName(
+      fileName,
+      newUser.id
+    );
 
     await Promise.all([
       ClientModel.create({
-        user_id: newUser.id,
-        first_name: firstName,
-        last_name: lastName,
+        userId: newUser.id,
+        firstName: firstName,
+        lastName: lastName,
         gender: '',
-        phone_number: '',
+        phoneNumber: '',
         dob: null,
-        address_country: '',
-        address_province: null,
-        address_district: null,
-        address_ward: null,
-        address_detail: '',
-        timezone: TimeZone.ASIA_HCM,
-        stripe_customer_id: '',
+        addressCountry: '',
+        addressProvince: null,
+        addressDistrict: null,
+        addressWard: null,
+        addressDetail: '',
+        timezone: TimeZone.ASIA_SG,
+        stripeCustomerId: '',
+        avatar,
       }),
-
       sendGridMail.sendSignUpTemplate(newUser, token),
     ]);
   }
@@ -329,7 +338,6 @@ class TokenServices {
     }
 
     const token = sign({ email }, env.jwtSecret);
-    // console.log('token', token);
 
     const user: UsersAttributes = {
       id: userExist.id,
