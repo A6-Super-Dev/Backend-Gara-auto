@@ -15,6 +15,29 @@ class ProductRepository {
       },
     });
   };
+
+  getCar = async (id: string) => {
+    return CarModel.findOne({
+      include: {
+        model: CarAppearanceModel,
+        as: 'carAppearance',
+      },
+      where: {
+        id: id,
+      },
+    });
+  };
+  getCarByName = async (name: string) => {
+    return CarModel.findOne({
+      include: {
+        model: CarAppearanceModel,
+        as: 'carAppearance',
+      },
+      where: {
+        name: name,
+      },
+    });
+  };
 }
 
 export default new ProductRepository();

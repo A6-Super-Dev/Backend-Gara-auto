@@ -4,8 +4,9 @@ import { logger } from '../../../common/helpers/logger';
 import InternalServerError from '../../../common/errors/types/InternalServerError';
 import { CreateNewOtoBody } from '../../../common/types/product';
 import { stringifyArray } from '../../../common/helpers/string';
-import ProductRepo from '../../../common/repositories/ProductRepo';
 import AdminServices from '../services/AdminService';
+import { CarAppearanceModifying } from '../../../common/types/common';
+import ProductRepo from '../../../common/repositories/ProductRepo';
 class ProductController extends AdminServices {
   createNewOto = async (
     req: Request<unknown, unknown, Array<CreateNewOtoBody>>,
@@ -21,12 +22,27 @@ class ProductController extends AdminServices {
     }
   };
 
-  getAllCars = async (_req: Request, res: Response) => {
+  updateCarsAppearance = async (req: Request, res: Response) => {
+    const cars = req.body;
     try {
-      const result = await ProductRepo.getAllCars();
-      res.json({ status: 'success', result });
+      const updateCarPromises = cars.map(
+        async (car: CarAppearanceModifying) => {
+          const result = await ProductRepo.getCarByName(car.baseInfo.name);
+          const { imgs, introImgs, exteriorReviewImgs, interiorReviewImgs } =
+            car.productImgs;
+
+          if (result) {
+            return this.updateCarAppearance(
+              { imgs, introImgs, exteriorReviewImgs, interiorReviewImgs },
+              result.id
+            );
+          }
+        }
+      );
+      await Promise.all(updateCarPromises);
+      res.json({ status: 'success' });
     } catch (error) {
-      logger.error(error, { reason: 'EXCEPTION at getAllCars()' });
+      logger.error(error, { reason: 'EXCEPTION at updateCarsAppearance()' });
       throw new InternalServerError();
     }
   };
@@ -38,6 +54,11 @@ class ProductController extends AdminServices {
       brand.name,
       brand.imgs
     );
+    res.json({ status: 'success' });
+  };
+  updateBrandImgs = async (req: Request, res: Response) => {
+    const { imgs } = req.body;
+    await this.updateImgs(imgs);
     res.json({ status: 'success' });
   };
 }

@@ -16,7 +16,6 @@ class ClientService {
         carRatings = [...carRatings, customCarRating];
       }
     }
-    console.log('carRatings', carRatings);
     await Promise.all(
       carRatings.map((carRating) => {
         return this.rateCar(carRating);
