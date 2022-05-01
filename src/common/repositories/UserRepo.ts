@@ -49,6 +49,15 @@ class UserRepository {
       },
     });
   }
+
+  async findUserById(id: number) {
+    return UserModel.findOne({
+      where: {
+        id,
+      },
+      raw: true,
+    });
+  }
 }
 
 export default new UserRepository();

@@ -1,22 +1,26 @@
-import { Model, DataTypes } from 'sequelize';
-import { ClientAttributes, ClientCreation } from '../types/common';
+import { Model, DataTypes, Optional } from 'sequelize';
+import { ClientAttributes } from '../types/common';
 import sequelize from '../../config/sequelize';
 
-class ClientModel extends Model<ClientAttributes, ClientCreation> {
-  declare id: number;
-  declare user_id: number;
-  declare first_name: string;
-  declare last_name: string;
-  declare gender: string;
-  declare phone_number: string;
-  declare dob: Date;
-  declare address_country: string;
-  declare address_province: number;
-  declare address_district: number;
-  declare address_ward: number;
-  declare address_detail: string;
-  declare timezone: string;
-  declare stripe_customer_id: string;
+class ClientModel extends Model<
+  ClientAttributes,
+  Optional<ClientAttributes, 'id'>
+> {
+  id: number;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  phoneNumber: string;
+  dob: Date;
+  addressCountry: string;
+  addressProvince: number;
+  addressDistrict: number;
+  addressWard: number;
+  addressDetail: string;
+  timezone: string;
+  stripeCustomerId: string;
+  avatar: string;
 }
 
 ClientModel.init(
@@ -27,50 +31,54 @@ ClientModel.init(
       primaryKey: true,
       allowNull: false,
     },
-    user_id: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    first_name: {
+    firstName: {
       type: DataTypes.STRING(50),
     },
-    last_name: {
+    lastName: {
       type: DataTypes.STRING(50),
     },
     gender: {
       type: DataTypes.STRING(10),
     },
-    phone_number: {
+    phoneNumber: {
       type: DataTypes.STRING(20),
     },
     dob: {
       type: DataTypes.DATE,
     },
-    address_country: {
+    addressCountry: {
       type: DataTypes.STRING(30),
     },
-    address_province: {
+    addressProvince: {
       type: DataTypes.INTEGER,
     },
-    address_district: {
+    addressDistrict: {
       type: DataTypes.INTEGER,
     },
-    address_ward: {
+    addressWard: {
       type: DataTypes.INTEGER,
     },
-    address_detail: {
+    addressDetail: {
       type: DataTypes.STRING(100),
     },
     timezone: {
       type: DataTypes.STRING(30),
     },
-    stripe_customer_id: {
+    stripeCustomerId: {
       type: DataTypes.STRING(40),
+    },
+    avatar: {
+      type: DataTypes.TEXT,
     },
   },
   {
     tableName: 'client_info',
     timestamps: false,
+    underscored: true,
     sequelize,
   }
 );

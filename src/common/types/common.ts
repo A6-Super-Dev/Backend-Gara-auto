@@ -34,6 +34,7 @@ export type LoginAttemptsCreation = Omit<LoginAttemptsAttributes, 'id'>;
 
 export enum TimeZone {
   ASIA_HCM = 'Asia/Ho_Chi_Minh',
+  ASIA_SG = 'Asia/Saigon',
 }
 
 export enum EmailStatus {
@@ -158,22 +159,21 @@ export type WishListCreation = Omit<WishListAttributes, 'id'>;
 
 export interface ClientAttributes {
   id: number;
-  user_id: number;
-  first_name: string;
-  last_name: string;
+  userId: number;
+  firstName: string;
+  lastName: string;
   gender: string;
-  phone_number: string;
+  phoneNumber: string;
   dob: Date;
-  address_country: string;
-  address_province: number;
-  address_district: number;
-  address_ward: number;
-  address_detail: string;
+  addressCountry: string;
+  addressProvince: number;
+  addressDistrict: number;
+  addressWard: number;
+  addressDetail: string;
   timezone: string;
-  stripe_customer_id: string;
+  stripeCustomerId: string;
+  avatar: string;
 }
-
-export type ClientCreation = Omit<ClientAttributes, 'id'>;
 
 export type ExitedField<E> = {
   [Property in keyof E]: E[Property];
@@ -197,4 +197,18 @@ export type UserIncludeLoginAttempts = JoinedQueryType<
 export interface TokenDecode extends JwtPayload {
   type?: string;
   user?: string;
+}
+
+export interface UpdateClientInfoAttributes {
+  firstName: string;
+  lastName: string;
+  gender: string;
+  phoneNumber: string;
+  dob: string;
+  country: string;
+  province: number;
+  district: number;
+  ward: number;
+  detail: string;
+  timezone: string;
 }

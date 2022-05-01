@@ -16,6 +16,10 @@ const fetch = async (...args: unknown[]) => {
 class UploadImgsFromUrlsService {
   private bucket: any;
   constructor() {
+    this.initValue();
+  }
+
+  private initValue() {
     try {
       admin.initializeApp({
         credential: admin.credential.cert(
@@ -25,10 +29,11 @@ class UploadImgsFromUrlsService {
       });
       this.bucket = admin.storage().bucket();
     } catch (error) {
-      logger.error(error, { reason: 'EXCEPTION at uploadImgToFirebase()' });
+      logger.error(error, { reason: 'EXCEPTION when init firebase' });
       throw new InternalServerError();
     }
   }
+
   private fetchFile(link: string) {
     return new Promise((resolve) => {
       resolve(fetch(link));
