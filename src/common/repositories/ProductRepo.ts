@@ -38,6 +38,17 @@ class ProductRepository {
       },
     });
   };
+  getCarsByBrandId = async (id: number) => {
+    return CarModel.findAll({
+      include: {
+        model: CarAppearanceModel,
+        as: 'carAppearance',
+      },
+      where: {
+        brandId: id,
+      },
+    });
+  };
 }
 
 export default new ProductRepository();
