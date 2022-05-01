@@ -63,10 +63,14 @@ export interface BrandAttributes {
   id: number;
   name: string;
   descriptions: string;
+  shortDescriptions: string;
+  brandImg: string;
 }
 
 export type BrandCreation = Omit<BrandAttributes, 'id'>;
-export type BrandModifying = Omit<BrandCreation, 'name'>;
+export type BrandModifying = {
+  descriptions: string;
+};
 export interface UserCarRatingAttributes {
   id: number;
   carId: number;
@@ -90,6 +94,9 @@ export interface CarAppearanceAttributes {
 }
 
 export type CarAppearanceCreation = Omit<CarAppearanceAttributes, 'id'>;
+export type CarAppearanceModifying = {
+  [key: string]: any;
+};
 
 export interface CarAttributes {
   id: number;

@@ -11,7 +11,7 @@ import CarAppearanceRepo from '../../../common/repositories/CarAppearanceRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
 import { BrandModifying } from '../../../common/types/common';
 import { CreateNewOtoBody } from '../../../common/types/product';
-import UploadImgsFromUrlsService from './UploadImgsFromUrlsService';
+import UploadImgsFromUrlsService from '../../../common/services/UploadImgsFromUrlsService';
 
 class AdminServices extends UploadImgsFromUrlsService {
   async createCars(cars: Array<CreateNewOtoBody>) {
@@ -98,6 +98,46 @@ class AdminServices extends UploadImgsFromUrlsService {
     const modifyingImgUrls = imgUrls.map((url) => 'https://tinbanxe.vn' + url);
     await this.uploadImgsToFirebase(modifyingImgUrls);
     return await BrandRepo.updateBrandInfo(brand, brandName);
+  }
+  async updateImgs(imgUrls: Array<string>) {
+    const modifyingImgUrls = imgUrls.map((url) => 'https://tinbanxe.vn' + url);
+    return await this.uploadImgsToFirebase(modifyingImgUrls);
+  }
+
+  async updateCarAppearance(
+    {
+      imgs,
+      introImgs,
+      exteriorReviewImgs,
+      interiorReviewImgs,
+    }: {
+      imgs: Array<string>;
+      introImgs: Array<string>;
+      exteriorReviewImgs: Array<string>;
+      interiorReviewImgs: Array<string>;
+    },
+    car_id: number
+  ) {
+    try {
+      const [
+        newImgs,
+        newIntroImgs,
+        newExteriorReviewImgs,
+        newInteriorReviewImgs,
+      ] = await Promise.all([
+        this.uploadImgsToFirebase(imgs),
+        this.uploadImgsToFirebase(introImgs),
+        this.uploadImgsToFirebase(exteriorReviewImgs),
+        this.uploadImgsToFirebase(interiorReviewImgs),
+      ]);
+      return CarAppearanceRepo.modifyCarImg(
+        { newImgs, newIntroImgs, newExteriorReviewImgs, newInteriorReviewImgs },
+        car_id
+      );
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at updateCarAppearance()' });
+      throw new InternalServerError();
+    }
   }
 }
 

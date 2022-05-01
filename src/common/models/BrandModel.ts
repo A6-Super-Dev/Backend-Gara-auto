@@ -23,6 +23,16 @@ BrandModel.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    shortDescriptions: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      field: 'short_descriptions',
+    },
+    brandImg: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'brand_img',
+    },
   },
   {
     tableName: 'brand',
