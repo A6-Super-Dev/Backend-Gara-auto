@@ -1,11 +1,15 @@
-import { Model, DataTypes } from 'sequelize';
-import { WishListAttributes, WishListCreation } from '../types/common';
+import { Model, DataTypes, Optional } from 'sequelize';
+import { WishListAttributes } from '../types/common';
 import sequelize from '../../config/sequelize';
+import CarModel from './CarModel';
 
-class WishListModel extends Model<WishListAttributes | WishListCreation> {
+class WishListModel extends Model<
+  WishListAttributes,
+  Optional<WishListAttributes, 'id'>
+> {
   id: number;
-  client_id: number;
-  car_id: number;
+  clientId: number;
+  carId: number;
 }
 
 WishListModel.init(
@@ -16,11 +20,11 @@ WishListModel.init(
       primaryKey: true,
       allowNull: false,
     },
-    client_id: {
+    clientId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    car_id: {
+    carId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -28,8 +32,14 @@ WishListModel.init(
   {
     tableName: 'wish_list',
     timestamps: false,
+    underscored: true,
     sequelize,
   }
 );
+
+WishListModel.hasOne(CarModel, {
+  as: 'cars',
+  foreignKey: 'id',
+});
 
 export default WishListModel;
