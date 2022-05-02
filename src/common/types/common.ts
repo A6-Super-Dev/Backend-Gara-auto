@@ -94,6 +94,7 @@ export interface CarAppearanceAttributes {
   newInteriorReviewImgs: string;
 }
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export type CarAppearanceCreation = Omit<CarAppearanceAttributes, 'id'>;
 export type CarAppearanceModifying = {
   [key: string]: any;
@@ -122,13 +123,12 @@ export type CarCreation = Omit<CarAttributes, 'id'>;
 
 export interface ClientCouponAttributes {
   id: number;
-  client_id: number;
-  coupon_id: number;
-  car_id: number;
-  used_at: Date;
+  clientId: number;
+  couponId: number;
+  carId: number;
+  usedAt: Date;
 }
 
-export type ClientCouponCreation = Omit<ClientCouponAttributes, 'id'>;
 export interface CouponAttributes {
   id: number;
   code: string;
@@ -151,11 +151,9 @@ export interface PaymentProviderAttributes {
 export type PaymentProviderCreation = Omit<PaymentProviderAttributes, 'id'>;
 export interface WishListAttributes {
   id: number;
-  client_id: number;
-  car_id: number;
+  clientId: number;
+  carId: number;
 }
-
-export type WishListCreation = Omit<WishListAttributes, 'id'>;
 
 export interface ClientAttributes {
   id: number;

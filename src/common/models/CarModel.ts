@@ -2,6 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 import { CarAttributes, CarCreation } from '../types/common';
 import sequelize from '../../config/sequelize';
 import CarAppearanceModel from './CarAppearanceModel';
+import BrandModel from './BrandModel';
 
 class CarModel extends Model<CarAttributes, CarCreation> {
   id: number;
@@ -95,6 +96,11 @@ CarModel.init(
 CarModel.hasOne(CarAppearanceModel, {
   as: 'carAppearance',
   foreignKey: 'car_id',
+});
+
+CarModel.hasOne(BrandModel, {
+  as: 'brand',
+  foreignKey: 'id',
 });
 
 export default CarModel;

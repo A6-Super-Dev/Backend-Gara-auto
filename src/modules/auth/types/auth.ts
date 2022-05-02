@@ -33,3 +33,36 @@ export enum TokenType {
 export interface JWTPayloadType extends JwtPayload {
   email?: string;
 }
+
+export interface WishListReturn {
+  cars: {
+    name: string;
+    price: string;
+    carAppearance: { imgs: string };
+    brand: { name: string };
+  };
+}
+export interface CurrentUserDetail {
+  roles: string;
+  status: UserStatus;
+  email: string;
+  createdAt: string | Date;
+  lastLoginTime: string | Date;
+  info: {
+    firstName: string;
+    lastName: string;
+    gender: string;
+    phoneNumber: string;
+    dob: Date;
+    addressCountry: string;
+    addressProvince: number;
+    addressDistrict: number;
+    addressWard: number;
+    addressDetail: string;
+    timezone: string;
+    stripeCustomerId: string;
+    avatar: string;
+    coupons: { id: string; couponId: string; usedAt: string | Date }[];
+    wishlist: WishListReturn[];
+  };
+}

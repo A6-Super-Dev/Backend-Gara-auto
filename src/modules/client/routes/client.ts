@@ -22,4 +22,10 @@ router.patch(
   wrapper(ClientController.updateClientInfo)
 );
 
+router.get(
+  '/client-data',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.getClientData)
+);
+
 export default router;

@@ -1,16 +1,16 @@
-import { Model, DataTypes } from 'sequelize';
-import { ClientCouponAttributes, ClientCouponCreation } from '../types/common';
+import { Model, DataTypes, Optional } from 'sequelize';
+import { ClientCouponAttributes } from '../types/common';
 import sequelize from '../../config/sequelize';
 
 class ClientCouponModel extends Model<
   ClientCouponAttributes,
-  ClientCouponCreation
+  Optional<ClientCouponAttributes, 'id'>
 > {
   id: number;
-  client_id: number;
-  coupon_id: number;
-  car_id: number;
-  used_at: Date;
+  clientId: number;
+  couponId: number;
+  carId: number;
+  usedAt: Date;
 }
 
 ClientCouponModel.init(
@@ -21,25 +21,26 @@ ClientCouponModel.init(
       primaryKey: true,
       allowNull: false,
     },
-    client_id: {
+    clientId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    coupon_id: {
+    couponId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    car_id: {
+    carId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    used_at: {
+    usedAt: {
       type: DataTypes.DATE,
     },
   },
   {
     tableName: 'client_coupon',
     timestamps: false,
+    underscored: true,
     sequelize,
   }
 );

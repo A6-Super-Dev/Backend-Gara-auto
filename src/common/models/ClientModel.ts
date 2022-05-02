@@ -1,6 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { ClientAttributes } from '../types/common';
 import sequelize from '../../config/sequelize';
+import ClientCouponModel from './ClientCouponModel';
+import WishListModel from './WishListModel';
 
 class ClientModel extends Model<
   ClientAttributes,
@@ -82,5 +84,15 @@ ClientModel.init(
     sequelize,
   }
 );
+
+ClientModel.hasMany(ClientCouponModel, {
+  as: 'coupons',
+  foreignKey: 'client_id',
+});
+
+ClientModel.hasMany(WishListModel, {
+  as: 'wishlist',
+  foreignKey: 'client_id',
+});
 
 export default ClientModel;

@@ -2,7 +2,7 @@ import defaultBrands from './brands.json';
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-export const converIntToFloat = (num: number, decPlaces: number): number => {
+export const convertIntToFloat = (num: number, decPlaces: number): number => {
   return num.toFixed(decPlaces) as any;
 };
 
@@ -33,4 +33,22 @@ export const assignPropToObj = (
   props.forEach((prop, idx) => {
     obj[prop] = values[idx];
   });
+};
+
+export function numberWithCommas(x: number) {
+  const regex = new RegExp(/\B(?=(\d{3})+(?!\d))/g);
+  return x.toString().replace(regex, ',');
+}
+
+export const convertToDong = (money: string) => {
+  if (money === 'Đang cập nhật') return money;
+  const [moneyString, type] = money.split(' ');
+  let result = money;
+  if (type === 'USD') {
+    const moneyNumber = parseInt(moneyString.split(',').join(''));
+
+    result = numberWithCommas(moneyNumber * 23000) + ' VND';
+  }
+
+  return result;
 };

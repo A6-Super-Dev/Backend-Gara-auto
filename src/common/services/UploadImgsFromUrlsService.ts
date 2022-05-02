@@ -7,6 +7,7 @@ import { stringifyArray } from '../helpers/string';
 import firebaseServiceKeys from '../../firebaseServiceKeys';
 
 /// get node-fetch
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 const importDynamic = new Function('modulePath', 'return import(modulePath)');
 const fetch = async (...args: unknown[]) => {
   const module = await importDynamic('node-fetch');
