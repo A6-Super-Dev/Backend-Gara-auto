@@ -20,6 +20,7 @@ class AdminServices extends UploadImgsFromUrlsService {
         const otoBaseInfos = oto.baseInfo;
         const productImgs = oto.productImgs;
 
+        /* eslint-disable  @typescript-eslint/no-explicit-any */
         const newOtoImgs = {} as any;
         const newOto = { ...otoBaseInfos, ...otoBaseInfos.description };
         assignPropToObj(

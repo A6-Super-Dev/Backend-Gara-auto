@@ -1,8 +1,11 @@
-import { Model, DataTypes } from 'sequelize';
-import { CouponAttributes, CouponCreation } from '../types/common';
+import { Model, DataTypes, Optional } from 'sequelize';
+import { CouponAttributes } from '../types/common';
 import sequelize from '../../config/sequelize';
 
-class CouponModel extends Model<CouponAttributes | CouponCreation> {
+class CouponModel extends Model<
+  CouponAttributes,
+  Optional<CouponAttributes, 'id'>
+> {
   id: number;
   code: string;
   description: string;

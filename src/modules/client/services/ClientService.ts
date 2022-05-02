@@ -1,5 +1,10 @@
+import dayjs from 'dayjs';
 import { TIMEZONES } from '../../../common/constants';
-import { converIntToFloat, getRandomBetween } from '../../../common/helpers';
+import {
+  convertIntToFloat,
+  convertToDong,
+  getRandomBetween,
+} from '../../../common/helpers';
 import ClientModel from '../../../common/models/ClientModel';
 import UserCarRatingRepo from '../../../common/repositories/UserCarRatingRepo';
 import UserRepo from '../../../common/repositories/UserRepo';
@@ -10,12 +15,14 @@ import {
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
     let carRatings = ratingInfos;
+
     if (carRatings.length === 0) {
       for (let i = 0; i < 200; i++) {
         const customCarRating = {} as UserCarRatingCreation;
         customCarRating.carId = getRandomBetween(1, 110);
         customCarRating.userId = getRandomBetween(30, 61);
-        customCarRating.ratingPoint = converIntToFloat(
+        /* eslint-disable  @typescript-eslint/no-explicit-any */
+        customCarRating.ratingPoint = convertIntToFloat(
           getRandomBetween(7, 11),
           1
         ) as any;
@@ -74,6 +81,29 @@ class ClientService {
     );
 
     return 'Success';
+  }
+
+  protected async getClientDataService(userId: number) {
+    const user = await UserRepo.getCurrentDetailUserById(userId);
+    user.createdAt = dayjs(user.createdAt).format('DD-MM-YYYY HH:mm:ss');
+    if (user.lastLoginTime !== null) {
+      user.lastLoginTime = dayjs(user.lastLoginTime).format(
+        'DD-MM-YYYY HH:mm:ss'
+      );
+    }
+
+    const wishlist = user.info.wishlist;
+
+    if (wishlist.length !== 0) {
+      user.info.wishlist = wishlist.map((item) => {
+        const currentPrice = item.cars.price;
+        const imgArray = JSON.parse(item.cars.carAppearance.imgs);
+        item.cars.price = convertToDong(currentPrice);
+        item.cars.carAppearance.imgs = imgArray[0];
+        return item;
+      });
+    }
+    return user;
   }
 }
 

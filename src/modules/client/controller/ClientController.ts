@@ -55,9 +55,9 @@ class ClientController extends ClientService {
       throw new InternalServerError();
     }
   };
-  getCarsByBrand = async (_req: Request, res: Response) => {
-    const brand: string = _req.params.brand;
-    // let brandId;
+
+  getCarsByBrand = async (req: Request, res: Response) => {
+    const brand: string = req.params.brand;
     try {
       const { id } = await BrandRepo.getBrandByName(brand);
       if (id) {
@@ -67,7 +67,7 @@ class ClientController extends ClientService {
         res.json({ status: 'success', msg: 'Brand name is invalid' });
       }
     } catch (error) {
-      logger.error(error, { reason: 'EXCEPTION at getAllCars()' });
+      logger.error(error, { reason: 'EXCEPTION at getCarsByBrand()' });
       throw new InternalServerError();
     }
   };
@@ -79,6 +79,17 @@ class ClientController extends ClientService {
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getAllCars()' });
       throw new InternalServerError();
+    }
+  };
+
+  getClientData = async (req: Request, res: Response) => {
+    const { id } = req.user;
+    try {
+      const result = await this.getClientDataService(id);
+      res.json(result);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getClientData()' });
+      throw new InternalServerError('Get client data failed');
     }
   };
 }
