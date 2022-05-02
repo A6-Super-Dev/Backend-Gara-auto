@@ -57,8 +57,8 @@ class ProductController extends AdminServices {
     res.json({ status: 'success' });
   };
   updateBrandImgs = async (req: Request, res: Response) => {
-    const { imgs } = req.body;
-    await this.updateImgs(imgs);
+    const { imgs, name } = req.body;
+    await this.updateImgs(imgs, name);
     res.json({ status: 'success' });
   };
 }

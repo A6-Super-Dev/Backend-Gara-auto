@@ -33,6 +33,11 @@ BrandModel.init(
       allowNull: false,
       field: 'brand_img',
     },
+    descriptionImgs: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'description_imgs',
+    },
   },
   {
     tableName: 'brand',

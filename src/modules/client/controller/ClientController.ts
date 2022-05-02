@@ -71,6 +71,16 @@ class ClientController extends ClientService {
       throw new InternalServerError();
     }
   };
+  getBrandInfo = async (_req: Request, res: Response) => {
+    const brand: string = _req.params.brand;
+    try {
+      const brandInfo = await BrandRepo.getBrandByName(brand);
+      res.json({ status: 'success', brandInfo });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getAllCars()' });
+      throw new InternalServerError();
+    }
+  };
 }
 
 export default new ClientController();

@@ -16,6 +16,8 @@ router.get('/car/brand/:brand', wrapper(ClientController.getCarsByBrand));
 
 router.get('/timezones', wrapper(ClientController.getTimeZone));
 
+router.get('/brand/:brand', wrapper(ClientController.getBrandInfo));
+
 router.patch(
   '/update-client-info',
   [validateExpiryToken, authentication, customAuthorizer],

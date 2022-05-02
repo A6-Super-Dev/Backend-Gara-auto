@@ -99,9 +99,12 @@ class AdminServices extends UploadImgsFromUrlsService {
     await this.uploadImgsToFirebase(modifyingImgUrls);
     return await BrandRepo.updateBrandInfo(brand, brandName);
   }
-  async updateImgs(imgUrls: Array<string>) {
-    const modifyingImgUrls = imgUrls.map((url) => 'https://tinbanxe.vn' + url);
-    return await this.uploadImgsToFirebase(modifyingImgUrls);
+  async updateImgs(imgUrls: Array<string>, brandName: string) {
+    const newImgUrls = stringifyArray(imgUrls);
+    return BrandRepo.updateBrandInfo(
+      { descriptionImgs: newImgUrls },
+      brandName
+    );
   }
 
   async updateCarAppearance(

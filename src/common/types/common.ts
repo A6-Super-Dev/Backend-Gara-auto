@@ -66,11 +66,12 @@ export interface BrandAttributes {
   descriptions: string;
   shortDescriptions: string;
   brandImg: string;
+  descriptionImgs: string;
 }
 
 export type BrandCreation = Omit<BrandAttributes, 'id'>;
 export type BrandModifying = {
-  descriptions: string;
+  [key: string]: any;
 };
 export interface UserCarRatingAttributes {
   id: number;
