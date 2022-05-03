@@ -6,17 +6,15 @@ import ClientController from '../controller/ClientController';
 import authentication from '../../../middlewares/authentication';
 
 const router = express.Router();
+router.get('/brand/get-all', wrapper(ClientController.getAllBrand));
+router.get('/brand/:brand', wrapper(ClientController.getBrandInfo));
 
 router.post('/car/rating', wrapper(ClientController.ratingCar));
-
 router.get('/car/get-one/:name', wrapper(ClientController.getCar));
-
 router.get('/car/get-all', wrapper(ClientController.getAllCars));
 router.get('/car/brand/:brand', wrapper(ClientController.getCarsByBrand));
 
 router.get('/timezones', wrapper(ClientController.getTimeZone));
-
-router.get('/brand/:brand', wrapper(ClientController.getBrandInfo));
 
 router.patch(
   '/update-client-info',
