@@ -16,6 +16,9 @@ class BrandRepository {
       },
     });
   }
+  getAllBrandRepo() {
+    return BrandModel.findAll({});
+  }
 }
 
 export default new BrandRepository();

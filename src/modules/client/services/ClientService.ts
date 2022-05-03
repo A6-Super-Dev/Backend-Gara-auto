@@ -6,6 +6,7 @@ import {
   getRandomBetween,
 } from '../../../common/helpers';
 import ClientModel from '../../../common/models/ClientModel';
+import BrandRepo from '../../../common/repositories/BrandRepo';
 import UserCarRatingRepo from '../../../common/repositories/UserCarRatingRepo';
 import UserRepo from '../../../common/repositories/UserRepo';
 import {
@@ -81,6 +82,16 @@ class ClientService {
     );
 
     return 'Success';
+  }
+
+  protected async getBrandInfoService(brand: string) {
+    const numberOfCharacter = brand.split('-');
+    if (numberOfCharacter.length >= 2) {
+      const brandName = numberOfCharacter.join(' ');
+      console.log('brandName', brandName);
+      return await BrandRepo.getBrandByName(brandName);
+    }
+    return await BrandRepo.getBrandByName(brand);
   }
 
   protected async getClientDataService(userId: number) {
