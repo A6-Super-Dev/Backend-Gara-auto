@@ -71,6 +71,7 @@ export interface BrandAttributes {
 
 export type BrandCreation = Omit<BrandAttributes, 'id'>;
 export type BrandModifying = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 export interface UserCarRatingAttributes {
@@ -165,9 +166,9 @@ export interface ClientAttributes {
   phoneNumber: string;
   dob: Date;
   addressCountry: string;
-  addressProvince: number;
-  addressDistrict: number;
-  addressWard: number;
+  addressProvince: string;
+  addressDistrict: string;
+  addressWard: string;
   addressDetail: string;
   timezone: string;
   stripeCustomerId: string;
@@ -205,9 +206,9 @@ export interface UpdateClientInfoAttributes {
   phoneNumber: string;
   dob: string;
   country: string;
-  province: number;
-  district: number;
-  ward: number;
+  province: string;
+  district: string;
+  ward: string;
   detail: string;
   timezone: string;
 }

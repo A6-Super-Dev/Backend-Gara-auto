@@ -16,9 +16,9 @@ class ClientModel extends Model<
   phoneNumber: string;
   dob: Date;
   addressCountry: string;
-  addressProvince: number;
-  addressDistrict: number;
-  addressWard: number;
+  addressProvince: string;
+  addressDistrict: string;
+  addressWard: string;
   addressDetail: string;
   timezone: string;
   stripeCustomerId: string;
@@ -56,13 +56,13 @@ ClientModel.init(
       type: DataTypes.STRING(30),
     },
     addressProvince: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(5),
     },
     addressDistrict: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(5),
     },
     addressWard: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(5),
     },
     addressDetail: {
       type: DataTypes.STRING(100),
