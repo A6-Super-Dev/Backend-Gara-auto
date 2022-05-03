@@ -134,10 +134,11 @@ class AdminServices extends UploadImgsFromUrlsService {
         this.uploadImgsToFirebase(exteriorReviewImgs),
         this.uploadImgsToFirebase(interiorReviewImgs),
       ]);
-      return CarAppearanceRepo.modifyCarImg(
+      const updateCarPromise = await CarAppearanceRepo.modifyCarImg(
         { newImgs, newIntroImgs, newExteriorReviewImgs, newInteriorReviewImgs },
         car_id
       );
+      return updateCarPromise;
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at updateCarAppearance()' });
       throw new InternalServerError();

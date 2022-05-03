@@ -14,7 +14,7 @@ router.put(
 
 router.post(
   '/brand/update-brand-imgs',
-  [validateExpiryToken, validateAdmin],
+  // [validateExpiryToken, validateAdmin],
   wrapper(AdminController.updateBrandImgs)
 );
 
@@ -26,7 +26,7 @@ router.post(
 
 router.post(
   '/car/update-car-newImgs',
-  [validateExpiryToken, validateAdmin],
+  // [validateExpiryToken, validateAdmin],
   wrapper(AdminController.updateCarsAppearance)
 );
 

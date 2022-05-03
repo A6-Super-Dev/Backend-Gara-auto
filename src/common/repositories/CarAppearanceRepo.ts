@@ -3,10 +3,10 @@ import { CarAppearanceCreation, CarAppearanceModifying } from '../types/common';
 
 class CarAppearanceRepository {
   async createNewImgsOfOto(datas: CarAppearanceCreation) {
-    return CarAppearanceModel.create(datas);
+    return await CarAppearanceModel.create(datas);
   }
-  modifyCarImg = (obj: CarAppearanceModifying, carId: number) => {
-    return CarAppearanceModel.update(obj, {
+  modifyCarImg = async (obj: CarAppearanceModifying, carId: number) => {
+    return await CarAppearanceModel.update(obj, {
       where: {
         car_id: carId,
       },

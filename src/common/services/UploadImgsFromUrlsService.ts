@@ -26,7 +26,7 @@ class UploadImgsFromUrlsService {
         credential: admin.credential.cert(
           firebaseServiceKeys as admin.ServiceAccount
         ),
-        storageBucket: 'oto-a6-superdev.appspot.com',
+        storageBucket: 'garage-a6-dev.appspot.com',
       });
       this.bucket = admin.storage().bucket();
     } catch (error) {
@@ -54,26 +54,28 @@ class UploadImgsFromUrlsService {
       const fetchFilePromises = urls.map((url) => this.fetchFile(url));
       const responseFromFetchFiles = await Promise.all(fetchFilePromises);
       try {
-        const newUrls = responseFromFetchFiles.map((response: any) => {
-          const newUrl = response.url
-            .replace('https://img.tinbanxe.vn/', '')
-            .replace('https://tinbanxe.vn/', '');
+        const newUrls = await Promise.all(
+          responseFromFetchFiles.map((response: any) => {
+            const newUrl = response.url
+              .replace('https://img.tinbanxe.vn/', '')
+              .replace('https://tinbanxe.vn/', '');
 
-          // const file = bucket.file('path/to/image.jpg');
-          const file = this.bucket.file(newUrl);
+            // const file = bucket.file('path/to/image.jpg');
+            const file = this.bucket.file(newUrl);
 
-          const contentType = response.headers.get('content-type');
-          const writeStream = file.createWriteStream({
-            metadata: {
-              contentType,
+            const contentType = response.headers.get('content-type');
+            const writeStream = file.createWriteStream({
               metadata: {
-                myValue: uuid(),
+                contentType,
+                metadata: {
+                  myValue: uuid(),
+                },
               },
-            },
-          });
-          response.body.pipe(writeStream);
-          return newUrl;
-        });
+            });
+            response.body.pipe(writeStream);
+            return newUrl;
+          })
+        );
         return stringifyArray(newUrls);
       } catch (error) {
         logger.error(error, { reason: 'EXCEPTION at uploadImgToFirebase()' });

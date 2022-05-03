@@ -26,7 +26,7 @@ class ClientController extends ClientService {
   getCar = async (_req: Request, res: Response) => {
     const name: string = _req.params.name;
     try {
-      const result = await ProductRepo.getCarByName(name.replaceAll('-', ' '));
+      const result = await ProductRepo.getCarByName(name);
       res.json({ status: 'success', result });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getCar()' });
@@ -57,7 +57,8 @@ class ClientController extends ClientService {
   };
 
   getCarsByBrand = async (req: Request, res: Response) => {
-    const brand: string = req.params.brand;
+    let brand: string = req.params.brand;
+    if (brand === 'rolls-royce') brand = 'rolls royce';
     try {
       const { id } = await BrandRepo.getBrandByName(brand);
       if (id) {

@@ -39,8 +39,8 @@ class ProductController extends AdminServices {
           }
         }
       );
-      await Promise.all(updateCarPromises);
-      res.json({ status: 'success' });
+      const result = await Promise.all(updateCarPromises);
+      res.json({ status: 'success', result: result });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at updateCarsAppearance()' });
       throw new InternalServerError();
@@ -57,8 +57,12 @@ class ProductController extends AdminServices {
     res.json({ status: 'success' });
   };
   updateBrandImgs = async (req: Request, res: Response) => {
-    const { imgs, name } = req.body;
-    await this.updateImgs(imgs, name);
+    const { imgs } = req.body;
+    // await this.updateImgs(imgs, name);
+    const newImgs = imgs.map((img: string) => {
+      return 'https://tinbanxe.vn' + img;
+    });
+    await this.uploadImgsToFirebase(newImgs);
     res.json({ status: 'success' });
   };
 }
