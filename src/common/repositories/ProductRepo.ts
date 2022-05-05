@@ -16,7 +16,7 @@ class ProductRepository {
     });
   };
 
-  getCar = async (id: string) => {
+  getCarById = async (id: string) => {
     return CarModel.findOne({
       include: {
         model: CarAppearanceModel,
@@ -27,6 +27,7 @@ class ProductRepository {
       },
     });
   };
+
   getCarByName = async (name: string) => {
     return CarModel.findOne({
       include: {

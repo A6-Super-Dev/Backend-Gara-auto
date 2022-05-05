@@ -34,6 +34,17 @@ class ClientController extends ClientService {
     }
   };
 
+  getCarById = async (_req: Request, res: Response) => {
+    const id: string = _req.params.carId;
+    try {
+      const result = await ProductRepo.getCarById(id);
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getCarById()' });
+      throw new InternalServerError();
+    }
+  };
+
   getTimeZone = async (_req: Request, res: Response) => {
     try {
       res.json(TIMEZONES);
