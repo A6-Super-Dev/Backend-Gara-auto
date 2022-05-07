@@ -35,13 +35,16 @@ class UploadImgsFromUrlsService {
     }
   }
 
-  private fetchFile(link: string) {
-    return new Promise((resolve) => {
-      resolve(fetch(link));
-    });
+  private async fetchFile(link: string) {
+    try {
+      return await fetch(link);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at fetchFile()' });
+      throw new InternalServerError();
+    }
   }
 
-  async uploadImgsToFirebase(urls: Array<string> | string) {
+  async uploadImgsToFirebase(urls: Array<string> | string, weblink?: string) {
     if (typeof urls === 'object') {
       urls = urls.map((url) => {
         return url
@@ -52,13 +55,15 @@ class UploadImgsFromUrlsService {
           .replaceAll('thumb/650', 'webp');
       });
       const fetchFilePromises = urls.map((url) => this.fetchFile(url));
-      const responseFromFetchFiles = await Promise.all(fetchFilePromises);
+      const responsesFromFetchFiles = await Promise.all(fetchFilePromises);
       try {
         const newUrls = await Promise.all(
-          responseFromFetchFiles.map((response: any) => {
+          responsesFromFetchFiles.map((response: any) => {
             const newUrl = response.url
               .replace('https://img.tinbanxe.vn/', '')
-              .replace('https://tinbanxe.vn/', '');
+              .replace('https://tinbanxe.vn/', '')
+              .replace('https://img1.banxehoi.com/', '')
+              .replace(weblink, '');
 
             // const file = bucket.file('path/to/image.jpg');
             const file = this.bucket.file(newUrl);

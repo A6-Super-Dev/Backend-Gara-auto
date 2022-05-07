@@ -59,7 +59,13 @@ export interface ErrorRecorderAttributes {
 }
 
 export type ErrorRecorderCreation = Omit<ErrorRecorderAttributes, 'id'>;
-
+export interface BlogAttributes {
+  id: number;
+  title: string;
+  descriptions: string;
+  descriptionImgs: string;
+}
+export type BlogCreation = Omit<BlogAttributes, 'id'>;
 export interface BrandAttributes {
   id: number;
   name: string;

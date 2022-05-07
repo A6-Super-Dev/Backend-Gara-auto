@@ -5,8 +5,12 @@ import InternalServerError from '../../../common/errors/types/InternalServerErro
 import { CreateNewOtoBody } from '../../../common/types/product';
 import { stringifyArray } from '../../../common/helpers/string';
 import AdminServices from '../services/AdminService';
-import { CarAppearanceModifying } from '../../../common/types/common';
+import {
+  BlogCreation,
+  CarAppearanceModifying,
+} from '../../../common/types/common';
 import ProductRepo from '../../../common/repositories/ProductRepo';
+
 class ProductController extends AdminServices {
   createNewOto = async (
     req: Request<unknown, unknown, Array<CreateNewOtoBody>>,
@@ -64,6 +68,21 @@ class ProductController extends AdminServices {
     });
     await this.uploadImgsToFirebase(newImgs);
     res.json({ status: 'success' });
+  };
+
+  createBlogs = async (req: Request, res: Response) => {
+    const blogs = req.body;
+    try {
+      await Promise.all(
+        blogs.map((blog: BlogCreation) => {
+          return this.createBlogService(blog);
+        })
+      );
+      res.json({ status: 'success' });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at createBlogs()' });
+      throw new InternalServerError();
+    }
   };
 }
 
