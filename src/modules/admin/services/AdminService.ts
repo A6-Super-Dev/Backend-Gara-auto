@@ -9,9 +9,10 @@ import { stringifyArray } from '../../../common/helpers/string';
 import BrandRepo from '../../../common/repositories/BrandRepo';
 import CarAppearanceRepo from '../../../common/repositories/CarAppearanceRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
-import { BrandModifying } from '../../../common/types/common';
+import { BlogCreation, BrandModifying } from '../../../common/types/common';
 import { CreateNewOtoBody } from '../../../common/types/product';
 import UploadImgsFromUrlsService from '../../../common/services/UploadImgsFromUrlsService';
+import BlogRepo from '../../../common/repositories/BlogRepo';
 
 class AdminServices extends UploadImgsFromUrlsService {
   async createCars(cars: Array<CreateNewOtoBody>) {
@@ -144,6 +145,25 @@ class AdminServices extends UploadImgsFromUrlsService {
       throw new InternalServerError();
     }
   }
+
+  createBlogService = async (blog: BlogCreation) => {
+    if (Array.isArray(blog.descriptions)) {
+      blog.descriptions = stringifyArray(blog.descriptions);
+    }
+    try {
+      blog.descriptionImgs = await this.uploadImgsToFirebase(
+        blog.descriptionImgs,
+        'https://img1.oto.com.vn/'
+      );
+      if (Array.isArray(blog.descriptionImgs)) {
+        blog.descriptionImgs = stringifyArray(blog.descriptionImgs);
+      }
+      return await BlogRepo.createBlog(blog);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at createBlogService()' });
+      throw new InternalServerError();
+    }
+  };
 }
 
 export default AdminServices;
