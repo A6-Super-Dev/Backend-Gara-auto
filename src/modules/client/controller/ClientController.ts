@@ -5,7 +5,10 @@ import { logger } from '../../../common/helpers/logger';
 import BlogRepo from '../../../common/repositories/BlogRepo';
 import BrandRepo from '../../../common/repositories/BrandRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
-import { UpdateClientInfoAttributes } from '../../../common/types/common';
+import {
+  ProcessPaymentBodyRequest,
+  UpdateClientInfoAttributes,
+} from '../../../common/types/common';
 import ClientService from '../services/ClientService';
 
 class ClientController extends ClientService {
@@ -136,8 +139,26 @@ class ClientController extends ClientService {
       const result = await BlogRepo.getBlogByName(title);
       res.json(result);
     } catch (error) {
-      logger.error(error, { reason: 'EXCEPTION at getClientData()' });
-      throw new InternalServerError('Get client data failed');
+      logger.error(error, { reason: 'EXCEPTION at getBlogByName()' });
+      throw new InternalServerError(
+        `Get blog by name failed with title ${title}`
+      );
+    }
+  };
+
+  processPayment = async (
+    req: Request<unknown, unknown, ProcessPaymentBodyRequest>,
+    res: Response
+  ) => {
+    const data = req.body;
+    const { id, email } = req.user;
+    try {
+      const result = await this.processPaymentService(data, id, email);
+      const statusNum = result.includes('Success') ? 200 : 400;
+      res.status(statusNum).json(result);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at processPayment()' });
+      throw new InternalServerError('Process payment fail');
     }
   };
 }

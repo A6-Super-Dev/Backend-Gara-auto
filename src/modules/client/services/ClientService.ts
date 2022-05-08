@@ -5,14 +5,20 @@ import {
   convertToDong,
   getRandomBetween,
 } from '../../../common/helpers';
+import CarModel from '../../../common/models/CarModel';
 import ClientModel from '../../../common/models/ClientModel';
+import ClientPaymentModel from '../../../common/models/ClientPaymentModel';
 import BrandRepo from '../../../common/repositories/BrandRepo';
 import UserCarRatingRepo from '../../../common/repositories/UserCarRatingRepo';
 import UserRepo from '../../../common/repositories/UserRepo';
 import {
+  ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
   UserCarRatingCreation,
 } from '../../../common/types/common';
+import uuid from 'uuid-v4';
+import sendGridMail from '../../../common/axios/sendGridMail';
+
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
     let carRatings = ratingInfos;
@@ -88,10 +94,9 @@ class ClientService {
     const numberOfCharacter = brand.split('-');
     if (numberOfCharacter.length >= 2) {
       const brandName = numberOfCharacter.join(' ');
-      console.log('brandName', brandName);
-      return await BrandRepo.getBrandByName(brandName);
+      return BrandRepo.getBrandByName(brandName);
     }
-    return await BrandRepo.getBrandByName(brand);
+    return BrandRepo.getBrandByName(brand);
   }
 
   protected async getClientDataService(userId: number) {
@@ -115,6 +120,49 @@ class ClientService {
       });
     }
     return user;
+  }
+
+  protected async processPaymentService(
+    body: ProcessPaymentBodyRequest,
+    userId: number,
+    email: string
+  ) {
+    const { carId, quantity } = body;
+    const [info, car] = await Promise.all([
+      ClientModel.findOne({
+        where: {
+          userId,
+        },
+      }),
+      CarModel.findOne({
+        where: {
+          id: carId,
+        },
+      }),
+    ]);
+
+    if (info === null) {
+      return 'You need to update your information to proceed';
+    }
+
+    if (car === null) {
+      return "This car doesn't exist in our database";
+    }
+
+    if (quantity === 0) {
+      return 'You need to provide quantity';
+    }
+
+    const payment = await ClientPaymentModel.create({
+      carId,
+      clientId: info.id,
+      quantity,
+      uuid: uuid(),
+    });
+
+    await sendGridMail.paymentTemplate(email, car.name, payment.uuid);
+
+    return 'Success';
   }
 }
 

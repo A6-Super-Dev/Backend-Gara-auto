@@ -218,3 +218,16 @@ export interface UpdateClientInfoAttributes {
   detail: string;
   timezone: string;
 }
+
+export interface ProcessPaymentBodyRequest {
+  carId: number;
+  quantity: number;
+}
+
+export interface ClientPaymentAttributes {
+  id: number;
+  clientId: number;
+  carId: number;
+  uuid: string;
+  quantity: number;
+}
