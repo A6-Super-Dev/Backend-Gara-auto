@@ -38,4 +38,10 @@ router.post(
   wrapper(ClientController.processPayment)
 );
 
+router.get(
+  '/payment-receipt',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.getPayment)
+);
+
 export default router;

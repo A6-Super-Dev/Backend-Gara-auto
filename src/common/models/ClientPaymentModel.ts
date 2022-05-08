@@ -1,6 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { ClientPaymentAttributes } from '../types/common';
 import sequelize from '../../config/sequelize';
+import ClientModel from './ClientModel';
+import CarModel from './CarModel';
 
 class ClientPaymentModel extends Model<
   ClientPaymentAttributes,
@@ -11,6 +13,7 @@ class ClientPaymentModel extends Model<
   carId: number;
   uuid: string;
   quantity: number;
+  createdAt: string | Date;
 }
 
 ClientPaymentModel.init(
@@ -37,6 +40,9 @@ ClientPaymentModel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    createdAt: {
+      type: DataTypes.DATE,
+    },
   },
   {
     tableName: 'client_payment',
@@ -45,5 +51,15 @@ ClientPaymentModel.init(
     sequelize,
   }
 );
+
+ClientPaymentModel.belongsTo(ClientModel, {
+  as: 'info',
+  foreignKey: 'client_id',
+});
+
+ClientPaymentModel.belongsTo(CarModel, {
+  as: 'car',
+  foreignKey: 'car_id',
+});
 
 export default ClientPaymentModel;

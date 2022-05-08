@@ -230,4 +230,21 @@ export interface ClientPaymentAttributes {
   carId: number;
   uuid: string;
   quantity: number;
+  createdAt: string | Date;
+}
+
+export interface PaymentReceipt {
+  uuid: string;
+  quantity: number;
+  createdAt: string;
+  car: {
+    name: string;
+    price: string;
+    carAppearance: {
+      imgs: string;
+    };
+    brand: {
+      name: string;
+    };
+  };
 }
