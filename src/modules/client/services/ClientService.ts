@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { TIMEZONES } from '../../../common/constants';
 import {
   convertIntToFloat,
-  convertToDong,
+  convertToUSD,
   getRandomBetween,
 } from '../../../common/helpers';
 import CarModel from '../../../common/models/CarModel';
@@ -114,7 +114,7 @@ class ClientService {
       user.info.wishlist = wishlist.map((item) => {
         const currentPrice = item.cars.price;
         const imgArray = JSON.parse(item.cars.carAppearance.imgs);
-        item.cars.price = convertToDong(currentPrice);
+        item.cars.price = convertToUSD(currentPrice);
         item.cars.carAppearance.imgs = imgArray[0];
         return item;
       });

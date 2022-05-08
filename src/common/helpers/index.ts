@@ -40,14 +40,14 @@ export function numberWithCommas(x: number) {
   return x.toString().replace(regex, ',');
 }
 
-export const convertToDong = (money: string) => {
+export const convertToUSD = (money: string) => {
   if (money === 'Đang cập nhật') return money;
   const [moneyString, type] = money.split(' ');
   let result = money;
-  if (type === 'USD') {
+  if (type === 'VND') {
     const moneyNumber = parseInt(moneyString.split(',').join(''));
 
-    result = numberWithCommas(moneyNumber * 23000) + ' VND';
+    result = numberWithCommas(moneyNumber / 25000) + ' USD';
   }
 
   return result;
