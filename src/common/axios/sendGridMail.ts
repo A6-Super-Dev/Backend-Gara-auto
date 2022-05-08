@@ -207,6 +207,40 @@ class SendGridMail {
       throw new Error(error);
     }
   }
+
+  public async paymentTemplate(
+    mail: string,
+    carName: string,
+    receiptID: string
+  ) {
+    try {
+      const message: MailDataRequired = {
+        from: this.adminEmail,
+        to: mail,
+        personalizations: [
+          {
+            to: [{ email: mail }],
+            subject: 'Your payment at GARAAUTO',
+            dynamicTemplateData: {
+              link: `${env.frontBaseUrl}`,
+              receiptID,
+              carName,
+            },
+          },
+        ],
+        templateId: env.sendGridReceiptTemplate,
+      };
+      const response = (await this.sgMail.send(message))[0];
+      logger.info(
+        `paymentTemplate returned with status: ${response.statusCode}`
+      );
+    } catch (error) {
+      logger.error(error, {
+        reason: 'EXCEPTION: paymentTemplate() ',
+      });
+      throw new Error(error);
+    }
+  }
 }
 
 export default new SendGridMail();

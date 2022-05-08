@@ -41,6 +41,7 @@ export default {
   sendGridFromEmail: process.env.SENDGRID_FROM_EMAIL,
   sendGridFromEmailName: process.env.SENDGRID_FROM_EMAIL_NAME,
   sendGridApiUrl: process.env.SENDGRID_API_URL,
+  sendGridReceiptTemplate: process.env.SENDGRID_RECEIPT_TEMPLATE_ID,
 
   //gRecaptcha
   googleRecaptchaSecret: process.env.GOOGLE_CAPTCHA_BACKEND,
