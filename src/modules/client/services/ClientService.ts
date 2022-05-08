@@ -12,12 +12,14 @@ import BrandRepo from '../../../common/repositories/BrandRepo';
 import UserCarRatingRepo from '../../../common/repositories/UserCarRatingRepo';
 import UserRepo from '../../../common/repositories/UserRepo';
 import {
+  PaymentReceipt,
   ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
   UserCarRatingCreation,
 } from '../../../common/types/common';
 import uuid from 'uuid-v4';
 import sendGridMail from '../../../common/axios/sendGridMail';
+import ClientPaymentRepo from '../../../common/repositories/ClientPaymentRepo';
 
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
@@ -158,11 +160,47 @@ class ClientService {
       clientId: info.id,
       quantity,
       uuid: uuid(),
+      createdAt: new Date(),
     });
 
     await sendGridMail.paymentTemplate(email, car.name, payment.uuid);
 
     return 'Success';
+  }
+
+  protected async getPaymentService(userId: number) {
+    const info = await ClientModel.findOne({
+      where: {
+        userId,
+      },
+    });
+
+    if (info === null) {
+      return 'You need to update your information to proceed';
+    }
+
+    const payments = await ClientPaymentRepo.getByClientId(info.id);
+    const result = payments.map((each) => {
+      const payment = each.toJSON() as unknown as PaymentReceipt;
+      let img = payment.car.carAppearance.imgs;
+      if (payment.createdAt !== null) {
+        payment.createdAt = dayjs(payment.createdAt).format(
+          'DD-MM-YYYY HH:mm:ss'
+        );
+      }
+
+      try {
+        const temp = JSON.parse(payment.car.carAppearance.imgs);
+        img = temp[0];
+        payment.car.carAppearance.imgs = img;
+      } catch (error) {
+        console.log(error);
+      }
+
+      return payment;
+    });
+
+    return result;
   }
 }
 

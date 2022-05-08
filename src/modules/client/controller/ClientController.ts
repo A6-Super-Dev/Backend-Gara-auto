@@ -87,10 +87,9 @@ class ClientController extends ClientService {
       throw new InternalServerError();
     }
   };
-  getBrandInfo = async (_req: Request, res: Response) => {
-    const brand: string = _req.params.brand;
+  getBrandInfo = async (req: Request, res: Response) => {
+    const brand: string = req.params.brand;
     try {
-      // const brandInfo = await BrandRepo.getBrandByName(brand);
       const brandInfo = await this.getBrandInfoService(brand);
       res.json({ status: 'success', brandInfo });
     } catch (error) {
@@ -99,7 +98,7 @@ class ClientController extends ClientService {
     }
   };
 
-  getAllBrand = async (req: Request, res: Response) => {
+  getAllBrand = async (_req: Request, res: Response) => {
     try {
       const allBrand = await BrandRepo.getAllBrandRepo();
       res.json({ status: 'success', allBrand });
@@ -159,6 +158,17 @@ class ClientController extends ClientService {
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at processPayment()' });
       throw new InternalServerError('Process payment fail');
+    }
+  };
+
+  getPayment = async (req: Request, res: Response) => {
+    const { id } = req.user;
+    try {
+      const result = await this.getPaymentService(id);
+      res.json(result);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getPayment()' });
+      throw new InternalServerError('Get payment fail');
     }
   };
 }
