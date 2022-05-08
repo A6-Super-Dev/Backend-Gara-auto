@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { TIMEZONES } from '../../../common/constants';
 import InternalServerError from '../../../common/errors/types/InternalServerError';
 import { logger } from '../../../common/helpers/logger';
+import BlogRepo from '../../../common/repositories/BlogRepo';
 import BrandRepo from '../../../common/repositories/BrandRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
 import { UpdateClientInfoAttributes } from '../../../common/types/common';
@@ -109,6 +110,30 @@ class ClientController extends ClientService {
     const { id } = req.user;
     try {
       const result = await this.getClientDataService(id);
+      res.json(result);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getClientData()' });
+      throw new InternalServerError('Get client data failed');
+    }
+  };
+
+  getAllBlogs = async (req: Request, res: Response) => {
+    const { page, limit } = req.query;
+    const tempPage = parseInt(page as string);
+    const tempLimit = parseInt(limit as string);
+    try {
+      const result = await BlogRepo.getAllBlogs(tempPage, tempLimit);
+      res.json(result);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getAllBlogs()' });
+      throw new InternalServerError('Get client data failed');
+    }
+  };
+
+  getBlogByName = async (req: Request, res: Response) => {
+    const { title } = req.params;
+    try {
+      const result = await BlogRepo.getBlogByName(title);
       res.json(result);
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getClientData()' });
