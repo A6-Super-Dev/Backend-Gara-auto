@@ -15,6 +15,9 @@ router.get('/car/get-one/:name', wrapper(ClientController.getCar));
 router.get('/car/:carId', wrapper(ClientController.getCarById));
 router.get('/car/brand/:brand', wrapper(ClientController.getCarsByBrand));
 
+router.get('/blog', wrapper(ClientController.getAllBlogs));
+router.get('/blog/:title', wrapper(ClientController.getBlogByName));
+
 router.get('/timezones', wrapper(ClientController.getTimeZone));
 
 router.patch(

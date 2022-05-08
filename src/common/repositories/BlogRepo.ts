@@ -6,9 +6,20 @@ class BlogRepository {
     return await BlogModel.create(datas);
   }
 
-  async getAllBlogs() {
-    return await BlogModel.findAll({});
+  async getAllBlogs(page: number, limit: number) {
+    const offset = limit * (page - 1);
+    return await BlogModel.findAll({
+      limit: limit,
+      offset: offset,
+    });
   }
+  getBlogByName = async (title: string) => {
+    return await BlogModel.findOne({
+      where: {
+        title: title,
+      },
+    });
+  };
 }
 
 export default new BlogRepository();

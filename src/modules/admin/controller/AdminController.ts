@@ -62,7 +62,6 @@ class ProductController extends AdminServices {
   };
   updateBrandImgs = async (req: Request, res: Response) => {
     const { imgs } = req.body;
-    // await this.updateImgs(imgs, name);
     const newImgs = imgs.map((img: string) => {
       return 'https://tinbanxe.vn' + img;
     });
