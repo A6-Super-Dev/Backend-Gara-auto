@@ -8,17 +8,23 @@ class BlogRepository {
 
   getAllBlogs(page: number, limit: number) {
     const offset = limit * (page - 1);
-    return BlogModel.findAll({
+    return BlogModel.findAndCountAll({
       limit: limit,
       offset: offset,
     });
   }
 
-  getBlogByName = (title: string) => {
+  getBlogById = (id: number) => {
     return BlogModel.findOne({
       where: {
-        title: title,
+        id,
       },
+    });
+  };
+
+  getBlogByOffset = (offset: number) => {
+    return BlogModel.findOne({
+      offset: offset,
     });
   };
 }
