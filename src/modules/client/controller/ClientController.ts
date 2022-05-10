@@ -132,15 +132,26 @@ class ClientController extends ClientService {
     }
   };
 
-  getBlogByName = async (req: Request, res: Response) => {
-    const { title } = req.params;
+  getBlogById = async (req: Request, res: Response) => {
+    const { id } = req.params;
     try {
-      const result = await BlogRepo.getBlogByName(title);
-      res.json(result);
+      const result = await BlogRepo.getBlogById(+id);
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getBlogByName()' });
+      throw new InternalServerError(`Get blog by name failed with title ${id}`);
+    }
+  };
+
+  getBlogByOffset = async (req: Request, res: Response) => {
+    const { offset } = req.params;
+    try {
+      const result = await BlogRepo.getBlogByOffset(+offset);
+      res.json({ status: 'success', result });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getBlogByName()' });
       throw new InternalServerError(
-        `Get blog by name failed with title ${title}`
+        `Get blog offset failed with title ${offset}`
       );
     }
   };
