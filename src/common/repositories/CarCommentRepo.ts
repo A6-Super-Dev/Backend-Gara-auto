@@ -7,22 +7,20 @@ class CarCommentRepo {
   createComment(datas: CarCommentCreation) {
     return CarCommentModel.create(datas);
   }
-  getAllCommentInCar(id: number) {
+  getAllCommentInCar(carId: number) {
     return CarCommentModel.findAll({
-      include: [
-        {
-          model: UserModel,
-          as: 'userInfo',
-          attributes: ['roles', 'status', 'email'],
-          include: {
-            model: ClientModel,
-            as: 'info',
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } as any,
-        },
-      ],
+      include: {
+        model: UserModel,
+        as: 'userInfo',
+        attributes: ['roles', 'status', 'email'],
+        include: {
+          model: ClientModel,
+          as: 'info',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
+      },
       where: {
-        carId: id,
+        carId,
       },
     });
   }
