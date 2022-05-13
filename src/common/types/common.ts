@@ -129,6 +129,36 @@ export interface CarAttributes {
 
 export type CarCreation = Omit<CarAttributes, 'id'>;
 
+export interface CarCommentAttributes {
+  id: number;
+  carId: number;
+  comment: string;
+  parent: string;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export type CarCommentCreation = Omit<CarCommentAttributes, 'id'>;
+export interface UserCommentReactionAttributes {
+  id: number;
+  userId: number;
+  carId: number;
+  commentId: number;
+  like: number;
+  dislike: number;
+}
+export type UserCommentReactionCreation = Omit<
+  UserCommentReactionAttributes,
+  'id'
+>;
+export type UserCommentReactionModification = {
+  userId: number;
+  commentId: number;
+  carId: number;
+  like?: number;
+  dislike?: number;
+};
+
 export interface ClientCouponAttributes {
   id: number;
   clientId: number;

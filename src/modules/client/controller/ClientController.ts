@@ -4,8 +4,11 @@ import InternalServerError from '../../../common/errors/types/InternalServerErro
 import { logger } from '../../../common/helpers/logger';
 import BlogRepo from '../../../common/repositories/BlogRepo';
 import BrandRepo from '../../../common/repositories/BrandRepo';
+import CarCommentRepo from '../../../common/repositories/CarCommentRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
+import UserCommentReactionRepo from '../../../common/repositories/UserCommentReactionRepo';
 import {
+  CarCommentCreation,
   ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
 } from '../../../common/types/common';
@@ -152,6 +155,51 @@ class ClientController extends ClientService {
       logger.error(error, { reason: 'EXCEPTION at getBlogByName()' });
       throw new InternalServerError(
         `Get blog offset failed with title ${offset}`
+      );
+    }
+  };
+
+  createComment = async (req: Request, res: Response) => {
+    const comment: CarCommentCreation = req.body;
+    try {
+      const result = await CarCommentRepo.createComment(comment);
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at createComment()' });
+      throw new InternalServerError(
+        `creating comment failed at createComment()`
+      );
+    }
+  };
+
+  getCarComments = async (req: Request, res: Response) => {
+    const { carId } = req.params;
+    try {
+      const result = await CarCommentRepo.getAllCommentInCar(+carId);
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getCarComments()' });
+      throw new InternalServerError(
+        `creating comment failed at getCarComments()`
+      );
+    }
+  };
+
+  createNewReaction = async (req: Request, res: Response) => {
+    const { userId, commentId, carId, like = -1, dislike = -1 } = req.body;
+    try {
+      const result = await UserCommentReactionRepo.createReaction({
+        userId,
+        commentId,
+        carId,
+        like,
+        dislike,
+      });
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at createNewReaction()' });
+      throw new InternalServerError(
+        `creating comment failed at createNewReaction()`
       );
     }
   };

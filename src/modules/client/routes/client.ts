@@ -14,6 +14,13 @@ router.get('/car/get-all', wrapper(ClientController.getAllCars));
 router.get('/car/get-one/:name', wrapper(ClientController.getCar));
 router.get('/car/:carId', wrapper(ClientController.getCarById));
 router.get('/car/brand/:brand', wrapper(ClientController.getCarsByBrand));
+router.post('/car/comment', wrapper(ClientController.createComment));
+router.get('/car/comment/:carId', wrapper(ClientController.getCarComments));
+
+router.post(
+  '/car/comment/reaction',
+  wrapper(ClientController.createNewReaction)
+);
 
 router.get('/blog', wrapper(ClientController.getAllBlogs));
 router.get('/blog/:id', wrapper(ClientController.getBlogById));
