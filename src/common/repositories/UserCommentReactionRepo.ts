@@ -17,6 +17,13 @@ class CommentReactionRepository {
       },
     });
   }
+  getAllReactionsInCar(carId: number) {
+    return UserCommentReactionModel.findAll({
+      where: {
+        carId,
+      },
+    });
+  }
 }
 
 export default new CommentReactionRepository();

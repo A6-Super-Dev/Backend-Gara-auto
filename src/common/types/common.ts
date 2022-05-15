@@ -133,7 +133,7 @@ export interface CarCommentAttributes {
   id: number;
   carId: number;
   comment: string;
-  parent: string;
+  mom: string;
   userId: number;
   createdAt: Date;
   updatedAt: Date;
@@ -221,13 +221,20 @@ export type AdditionalField<A> = {
 export type JoinedQueryType<E, A> = ExitedField<Partial<E>> &
   AdditionalField<A>;
 
-export interface AttemptsIncludeAttributes {
+export interface AttemptsAttributes {
   attempts: LoginAttemptsAttributes;
 }
+export interface UserInfoAttributes {
+  info: unknown;
+}
+export type AttemptsUserInfoAttributes = JoinedQueryType<
+  AttemptsAttributes,
+  UserInfoAttributes
+>;
 
 export type UserIncludeLoginAttempts = JoinedQueryType<
   UsersAttributes,
-  AttemptsIncludeAttributes
+  AttemptsUserInfoAttributes
 >;
 
 export interface TokenDecode extends JwtPayload {

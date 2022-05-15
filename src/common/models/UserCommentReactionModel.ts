@@ -57,7 +57,12 @@ UserCommentReactionModel.belongsTo(UserModel, {
 });
 
 UserCommentReactionModel.belongsTo(CarCommentModel, {
-  as: 'comment',
+  as: 'reaction',
+  foreignKey: 'comment_id',
+});
+
+CarCommentModel.hasOne(UserCommentReactionModel, {
+  as: 'reaction',
   foreignKey: 'comment_id',
 });
 

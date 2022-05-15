@@ -28,7 +28,7 @@ CarCommentModel.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    parent: {
+    mom: {
       type: DataTypes.STRING,
       allowNull: false,
     },
