@@ -36,6 +36,7 @@ ClientModel.init(
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: 'user_id',
     },
     firstName: {
       type: DataTypes.STRING(50),

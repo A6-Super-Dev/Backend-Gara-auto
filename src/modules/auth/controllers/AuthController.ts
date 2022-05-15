@@ -90,12 +90,13 @@ class AuthController extends TokenServices {
   login = async (req: Request<unknown, unknown, SignInBody>, res: Response) => {
     try {
       const { email, password } = req.body;
-      const { accessToken, refreshToken } = await this.loginService(
+      const { accessToken, refreshToken, info } = await this.loginService(
         email,
         password
       );
       res.json({
         statusCode: 200,
+        userInfo: info,
         headers: {
           authorization: `Bearer ${accessToken.trim()}`,
         },

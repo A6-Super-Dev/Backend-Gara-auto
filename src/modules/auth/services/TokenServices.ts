@@ -242,6 +242,7 @@ class TokenServices {
 
   protected loginService = async (email: string, password: string) => {
     const user = await UserRepo.findUserDetailsByEmail(email);
+    const { info } = user;
 
     if (user === null) {
       throw new Error(messages.authMessage.EmailNotExist);
@@ -301,7 +302,7 @@ class TokenServices {
     const accessToken = await this.generateToken(user.email, TokenType.ACCESS);
     const refreshToken = await this.handleRefreshToken(user);
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, info };
   };
 
   protected loginDirectlyService = async (email: string) => {
