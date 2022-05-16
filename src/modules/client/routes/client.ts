@@ -56,4 +56,10 @@ router.get(
   wrapper(ClientController.getPayment)
 );
 
+router.patch(
+  '/wish-list',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.updateWishList)
+);
+
 export default router;

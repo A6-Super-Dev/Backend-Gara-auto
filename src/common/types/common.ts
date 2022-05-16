@@ -285,3 +285,8 @@ export interface PaymentReceipt {
     };
   };
 }
+
+export interface UpdateWishlistRequest {
+  listCarId: number[];
+  takeAction: boolean;
+}
