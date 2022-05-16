@@ -20,6 +20,8 @@ import {
 import uuid from 'uuid-v4';
 import sendGridMail from '../../../common/axios/sendGridMail';
 import ClientPaymentRepo from '../../../common/repositories/ClientPaymentRepo';
+import messages from '../../../common/messages';
+import WishListModel from '../../../common/models/WishListModel';
 
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
@@ -201,6 +203,54 @@ class ClientService {
     });
 
     return result;
+  }
+
+  protected async updateWishListService(
+    carIds: number[],
+    takeAction: boolean,
+    userId: number
+  ) {
+    let message = messages.userMessage.UpdateWishListSuccess;
+    const info = await ClientModel.findOne({
+      where: {
+        userId,
+      },
+    });
+
+    if (info === null) {
+      message = messages.userMessage.NotHavingProfile;
+      return message;
+    }
+
+    if (!takeAction) {
+      return message;
+    }
+
+    const currentWishlist = await WishListModel.findAll({
+      where: {
+        clientId: info.id,
+      },
+      raw: true,
+    });
+
+    if (currentWishlist.length !== 0) {
+      await WishListModel.destroy({
+        where: {
+          clientId: info.id,
+        },
+      });
+    }
+
+    if (carIds.length !== 0) {
+      await WishListModel.bulkCreate(
+        carIds.map((id) => ({
+          clientId: info.id,
+          carId: id,
+        }))
+      );
+    }
+
+    return message;
   }
 }
 

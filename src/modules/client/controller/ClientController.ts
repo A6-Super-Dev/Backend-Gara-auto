@@ -11,6 +11,7 @@ import {
   CarCommentCreation,
   ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
+  UpdateWishlistRequest,
 } from '../../../common/types/common';
 import ClientService from '../services/ClientService';
 
@@ -262,6 +263,28 @@ class ClientController extends ClientService {
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getPayment()' });
       throw new InternalServerError('Get payment fail');
+    }
+  };
+
+  updateWishList = async (
+    req: Request<unknown, unknown, UpdateWishlistRequest>,
+    res: Response
+  ) => {
+    const { listCarId, takeAction } = req.body;
+    const { id } = req.user;
+    try {
+      const message = await this.updateWishListService(
+        listCarId,
+        takeAction,
+        id
+      );
+      const currentStatus = message.toLowerCase().includes('success')
+        ? 200
+        : 400;
+      res.status(currentStatus).send(message);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at updateWishList()' });
+      throw new InternalServerError('Update updateWishList fail');
     }
   };
 }
