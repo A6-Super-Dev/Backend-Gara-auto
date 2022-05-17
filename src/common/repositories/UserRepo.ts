@@ -37,6 +37,10 @@ class UserRepository {
           model: LoginAttemptsModel,
           as: 'attempts',
         },
+        {
+          model: ClientModel,
+          as: 'info',
+        },
       ],
     })) as unknown;
 

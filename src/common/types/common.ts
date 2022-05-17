@@ -129,6 +129,36 @@ export interface CarAttributes {
 
 export type CarCreation = Omit<CarAttributes, 'id'>;
 
+export interface CarCommentAttributes {
+  id: number;
+  carId: number;
+  comment: string;
+  mom: string;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export type CarCommentCreation = Omit<CarCommentAttributes, 'id'>;
+export interface UserCommentReactionAttributes {
+  id: number;
+  userId: number;
+  carId: number;
+  commentId: number;
+  like: number;
+  dislike: number;
+}
+export type UserCommentReactionCreation = Omit<
+  UserCommentReactionAttributes,
+  'id'
+>;
+export type UserCommentReactionModification = {
+  userId: number;
+  commentId: number;
+  carId: number;
+  like?: number;
+  dislike?: number;
+};
+
 export interface ClientCouponAttributes {
   id: number;
   clientId: number;
@@ -191,13 +221,20 @@ export type AdditionalField<A> = {
 export type JoinedQueryType<E, A> = ExitedField<Partial<E>> &
   AdditionalField<A>;
 
-export interface AttemptsIncludeAttributes {
+export interface AttemptsAttributes {
   attempts: LoginAttemptsAttributes;
 }
+export interface UserInfoAttributes {
+  info: unknown;
+}
+export type AttemptsUserInfoAttributes = JoinedQueryType<
+  AttemptsAttributes,
+  UserInfoAttributes
+>;
 
 export type UserIncludeLoginAttempts = JoinedQueryType<
   UsersAttributes,
-  AttemptsIncludeAttributes
+  AttemptsUserInfoAttributes
 >;
 
 export interface TokenDecode extends JwtPayload {
@@ -247,4 +284,9 @@ export interface PaymentReceipt {
       name: string;
     };
   };
+}
+
+export interface UpdateWishlistRequest {
+  listCarId: number[];
+  takeAction: boolean;
 }

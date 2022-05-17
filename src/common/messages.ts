@@ -33,6 +33,8 @@ export default {
   userMessage: {
     RoleDoesntExist: 'This kind of roles doesnt exist ',
     EmailExist: 'This email have already taken, try a new one instead',
+    UpdateWishListSuccess: 'Update wishlist successfully',
+    NotHavingProfile: 'You need to have profile to access this function',
   },
 
   httpMessages: {

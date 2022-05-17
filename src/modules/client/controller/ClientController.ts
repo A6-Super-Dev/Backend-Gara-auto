@@ -4,10 +4,14 @@ import InternalServerError from '../../../common/errors/types/InternalServerErro
 import { logger } from '../../../common/helpers/logger';
 import BlogRepo from '../../../common/repositories/BlogRepo';
 import BrandRepo from '../../../common/repositories/BrandRepo';
+import CarCommentRepo from '../../../common/repositories/CarCommentRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
+import UserCommentReactionRepo from '../../../common/repositories/UserCommentReactionRepo';
 import {
+  CarCommentCreation,
   ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
+  UpdateWishlistRequest,
 } from '../../../common/types/common';
 import ClientService from '../services/ClientService';
 
@@ -29,9 +33,14 @@ class ClientController extends ClientService {
 
   getCar = async (_req: Request, res: Response) => {
     const name: string = _req.params.name;
+    const id: number = +_req.params.id;
     try {
-      const result = await ProductRepo.getCarByName(name);
-      res.json({ status: 'success', result });
+      const [carInfo, comments, commentReactions] = await Promise.all([
+        ProductRepo.getCarByName(name),
+        CarCommentRepo.getAllCommentInCar(id),
+        UserCommentReactionRepo.getAllReactionsInCar(id),
+      ]);
+      res.json({ status: 'success', carInfo, comments, commentReactions });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getCar()' });
       throw new InternalServerError();
@@ -41,8 +50,11 @@ class ClientController extends ClientService {
   getCarById = async (_req: Request, res: Response) => {
     const id: string = _req.params.carId;
     try {
-      const result = await ProductRepo.getCarById(id);
-      res.json({ status: 'success', result });
+      const [carInfo, comments] = await Promise.all([
+        ProductRepo.getCarById(id),
+        CarCommentRepo.getAllCommentInCar(+id),
+      ]);
+      res.json({ status: 'success', carInfo, comments });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getCarById()' });
       throw new InternalServerError();
@@ -156,6 +168,77 @@ class ClientController extends ClientService {
     }
   };
 
+  createComment = async (req: Request, res: Response) => {
+    const comment: CarCommentCreation = req.body;
+    try {
+      const result = await CarCommentRepo.createComment(comment);
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at createComment()' });
+      throw new InternalServerError(
+        `creating comment failed at createComment()`
+      );
+    }
+  };
+
+  getCarComments = async (req: Request, res: Response) => {
+    const { carId } = req.params;
+    try {
+      const [result, carComments] = await Promise.all([
+        CarCommentRepo.getAllCommentInCar(+carId),
+        UserCommentReactionRepo.getAllReactionsInCar(+carId),
+      ]);
+      res.json({ status: 'success', result, carComments });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getCarComments()' });
+      throw new InternalServerError(
+        `creating comment failed at getCarComments()`
+      );
+    }
+  };
+
+  createNewReaction = async (req: Request, res: Response) => {
+    const { userId, commentId, carId, like = 0, dislike = 0 } = req.body;
+    try {
+      const result = await UserCommentReactionRepo.createReaction({
+        userId,
+        commentId,
+        carId,
+        like,
+        dislike,
+      });
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at createNewReaction()' });
+      throw new InternalServerError(
+        `creating comment failed at createNewReaction()`
+      );
+    }
+  };
+
+  updateReaction = async (req: Request, res: Response) => {
+    const { userId, commentId, carId, like = 0, dislike = 0 } = req.body;
+    try {
+      const result = await UserCommentReactionRepo.updateReaction(
+        {
+          userId,
+          commentId,
+          carId,
+          like,
+          dislike,
+        },
+        userId,
+        commentId
+      );
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at updateReaction()' });
+      throw new InternalServerError(
+        `creating comment failed at updateReaction()`
+      );
+    }
+  };
+
   processPayment = async (
     req: Request<unknown, unknown, ProcessPaymentBodyRequest>,
     res: Response
@@ -180,6 +263,28 @@ class ClientController extends ClientService {
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getPayment()' });
       throw new InternalServerError('Get payment fail');
+    }
+  };
+
+  updateWishList = async (
+    req: Request<unknown, unknown, UpdateWishlistRequest>,
+    res: Response
+  ) => {
+    const { listCarId, takeAction } = req.body;
+    const { id } = req.user;
+    try {
+      const message = await this.updateWishListService(
+        listCarId,
+        takeAction,
+        id
+      );
+      const currentStatus = message.toLowerCase().includes('success')
+        ? 200
+        : 400;
+      res.status(currentStatus).send(message);
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at updateWishList()' });
+      throw new InternalServerError('Update updateWishList fail');
     }
   };
 }
