@@ -6,6 +6,7 @@ import BlogRepo from '../../../common/repositories/BlogRepo';
 import BrandRepo from '../../../common/repositories/BrandRepo';
 import CarCommentRepo from '../../../common/repositories/CarCommentRepo';
 import ProductRepo from '../../../common/repositories/ProductRepo';
+import UserRepo from '../../../common/repositories/UserRepo';
 import UserCommentReactionRepo from '../../../common/repositories/UserCommentReactionRepo';
 import {
   CarCommentCreation,
@@ -171,8 +172,13 @@ class ClientController extends ClientService {
   createComment = async (req: Request, res: Response) => {
     const comment: CarCommentCreation = req.body;
     try {
-      const result = await CarCommentRepo.createComment(comment);
-      res.json({ status: 'success', result });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const temp: any = await CarCommentRepo.createComment(comment);
+      const userIdCreatedComment = temp.userId;
+      const userInfo = await UserRepo.findUserInfosById(userIdCreatedComment);
+      const newCreatedComment = { ...temp.dataValues };
+      newCreatedComment.userInfo = userInfo;
+      res.json({ status: 'success', newCreatedComment });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at createComment()' });
       throw new InternalServerError(
