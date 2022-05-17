@@ -5,7 +5,8 @@ import { CarCommentCreation } from '../types/common';
 
 class CarCommentRepo {
   createComment(datas: CarCommentCreation) {
-    return CarCommentModel.create(datas);
+    const newCreatedComment = CarCommentModel.create(datas, {});
+    return newCreatedComment;
   }
   getAllCommentInCar(id: number) {
     return CarCommentModel.findAll({

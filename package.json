@@ -13,7 +13,10 @@
     "prettier": "prettier --check src",
     "prettier:fix": "prettier --write src",
     "prepare-develop": "husky install",
-    "v": "node -v"
+    "v": "node -v",
+    "add-changes": "git add .",
+    "commit-force": "git commit --amend --no-edit --no-verify",
+    "deploy:heroku": "git push heroku master -f"
   },
   "author": "",
   "license": "ISC",

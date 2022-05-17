@@ -69,6 +69,19 @@ class UserRepository {
     });
   }
 
+  async findUserInfosById(id: number) {
+    return UserModel.findOne({
+      attributes: ['roles', 'status', 'email'],
+      include: {
+        model: ClientModel,
+        as: 'info',
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
   async getCurrentDetailUserById(id: number) {
     const userAsModel = await UserModel.findOne({
       attributes: [
