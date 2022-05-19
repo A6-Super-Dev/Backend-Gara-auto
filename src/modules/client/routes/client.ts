@@ -4,6 +4,11 @@ import customAuthorizer from '../../../middlewares/customAuthorizer';
 import validateExpiryToken from '../../../middlewares/validateExpiryToken';
 import ClientController from '../controller/ClientController';
 import authentication from '../../../middlewares/authentication';
+import multer from 'multer';
+
+const upload = multer({
+  limits: { fileSize: 8000000 /** Max size file upload is 8MB */ },
+});
 
 const router = express.Router();
 router.get('/brand/get-all', wrapper(ClientController.getAllBrand));
@@ -73,6 +78,15 @@ router.patch(
   '/wish-list',
   [validateExpiryToken, authentication, customAuthorizer],
   wrapper(ClientController.updateWishList)
+);
+
+const uploader = upload.fields([{ name: 'avatar', maxCount: 1 }]);
+
+router.put(
+  '/update-client-avatar',
+  uploader,
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.changeAvatar)
 );
 
 export default router;

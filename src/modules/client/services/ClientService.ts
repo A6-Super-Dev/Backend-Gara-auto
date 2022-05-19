@@ -25,6 +25,8 @@ import ClientPaymentRepo from '../../../common/repositories/ClientPaymentRepo';
 import messages from '../../../common/messages';
 import WishListModel from '../../../common/models/WishListModel';
 import CarRepo from '../../../common/repositories/CarRepo';
+import Cloudinary from '../../../common/services/Cloudinary';
+import fs from 'fs';
 
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
@@ -319,6 +321,23 @@ class ClientService {
     }
 
     return message;
+  }
+
+  protected async changeAvatarService(image, userId: number) {
+    const fileLocation = __dirname + image.originalname;
+    const client = await ClientModel.findOne({
+      where: {
+        userId,
+      },
+    });
+    fs.writeFileSync(fileLocation, image.buffer);
+    const imageUrl = await Cloudinary.uploadAvatar(
+      fileLocation,
+      client.id + '-' + uuid()
+    );
+    fs.unlinkSync(fileLocation);
+    client.avatar = imageUrl;
+    client.save();
   }
 }
 
