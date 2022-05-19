@@ -11,6 +11,6 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
-    'dot-notation': 'error',
+    // 'dot-notation': 'error',
   },
 };

@@ -361,6 +361,23 @@ class ClientController extends ClientService {
       throw new InternalServerError('Update updateWishList fail');
     }
   };
+
+  changeAvatar = async (req: Request, res: Response) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const image: any = req.files;
+    const { id } = req.user;
+    const currentImg = image.avatar[0];
+    try {
+      if (!currentImg) {
+        return res.status(400).send('Image is required to use this function');
+      }
+      await this.changeAvatarService(currentImg, id);
+      res.send('Avatar changed successfully');
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at updateWishList()' });
+      throw new InternalServerError('Change client avatar fail');
+    }
+  };
 }
 
 export default new ClientController();

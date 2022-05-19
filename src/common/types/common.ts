@@ -290,3 +290,19 @@ export interface UpdateWishlistRequest {
   listCarId: number[];
   takeAction: boolean;
 }
+
+export interface GetOneCarReturn {
+  id: number;
+  brandId: number;
+  name: string;
+  price: string;
+  discountPercent: number;
+  design: string;
+  engine: string;
+  gear: string;
+  seats: string;
+  capacity: string;
+  yearOfManufacture: string;
+  imgs: string;
+  brand: string | null;
+}
