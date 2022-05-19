@@ -33,7 +33,7 @@ class ProductRepository {
         as: 'carAppearance',
       },
       where: {
-        name: name,
+        name,
       },
     });
   };

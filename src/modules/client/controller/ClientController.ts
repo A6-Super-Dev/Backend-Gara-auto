@@ -149,6 +149,43 @@ class ClientController extends ClientService {
     }
   };
 
+  filterCar = async (req: Request, res: Response) => {
+    let { brandName } = req.body;
+    const { designType, price, seat, radio } = req.body;
+    if (brandName.includes('-')) brandName = brandName.replace('-', ' ');
+
+    try {
+      const { id } = await BrandRepo.getBrandByName(brandName);
+      if (id) {
+        const filterCar = await this.filterCarByDesignTypeService(
+          id,
+          designType,
+          price,
+          seat,
+          radio
+        );
+        res.json({ success: true, filterCar });
+      }
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at filterCarByDesignType()' });
+      throw new InternalServerError();
+    }
+  };
+
+  getAllFilterAttribute = async (req: Request, res: Response) => {
+    const { brand } = req.params;
+    try {
+      const { id } = await BrandRepo.getBrandByName(brand);
+      if (id) {
+        const result = await this.getAllFilterAttributeService(id);
+        res.json({ success: true, result });
+      }
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getAllFilterAttribute()' });
+      throw new InternalServerError();
+    }
+  };
+
   getClientData = async (req: Request, res: Response) => {
     const { id } = req.user;
     try {

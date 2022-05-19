@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import { TIMEZONES } from '../../../common/constants';
 import {
   convertIntToFloat,
+  convertMoneyStringToNumber,
+  convertPriceStringToFilterType,
   convertToUSD,
   getRandomBetween,
 } from '../../../common/helpers';
@@ -22,6 +24,7 @@ import sendGridMail from '../../../common/axios/sendGridMail';
 import ClientPaymentRepo from '../../../common/repositories/ClientPaymentRepo';
 import messages from '../../../common/messages';
 import WishListModel from '../../../common/models/WishListModel';
+import CarRepo from '../../../common/repositories/CarRepo';
 
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
@@ -101,6 +104,71 @@ class ClientService {
       return BrandRepo.getBrandByName(brandName);
     }
     return BrandRepo.getBrandByName(brand);
+  }
+
+  protected async filterCarByDesignTypeService(
+    brandId: number,
+    designType: string,
+    price: string,
+    seat: string,
+    radio: string
+  ) {
+    //filter bodyType, seat
+    const conditions = { brandId, design: designType, seats: seat };
+    for (const [key, value] of Object.entries(conditions)) {
+      if (!value) delete conditions[`${key}`];
+    }
+    const filterWithoutMoney = await CarRepo.filterBodyTypeAndSeat(conditions);
+    const finalFilterWithoutMoney = filterWithoutMoney.sort((a, b) => {
+      if (radio === 'asc')
+        return (
+          convertMoneyStringToNumber(a.price) -
+          convertMoneyStringToNumber(b.price)
+        );
+      return (
+        convertMoneyStringToNumber(b.price) -
+        convertMoneyStringToNumber(a.price)
+      );
+    });
+
+    if (price === '') return finalFilterWithoutMoney;
+
+    //filter price
+    const priceFromInputNumberType = convertPriceStringToFilterType(price).map(
+      (item) => convertMoneyStringToNumber(item)
+    );
+    const result = filterWithoutMoney.filter(
+      (item) =>
+        convertMoneyStringToNumber(item.price) > priceFromInputNumberType[0] &&
+        convertMoneyStringToNumber(item.price) <= priceFromInputNumberType[1]
+    );
+    const finalResult = result.sort((a, b) => {
+      if (radio === 'asc')
+        return (
+          convertMoneyStringToNumber(a.price) -
+          convertMoneyStringToNumber(b.price)
+        );
+      return (
+        convertMoneyStringToNumber(b.price) -
+        convertMoneyStringToNumber(a.price)
+      );
+    });
+    return finalResult;
+
+    //filter ASC AND DESC
+  }
+
+  protected async getAllFilterAttributeService(brandId: number) {
+    const designAttributesInDB = await CarRepo.getDistinctDesignAttribute(
+      brandId
+    );
+
+    const seatAttributesInDB = await CarRepo.getDistinctSeatAttribute(brandId);
+
+    return {
+      designAttribute: designAttributesInDB,
+      seatAttribute: seatAttributesInDB,
+    };
   }
 
   protected async getClientDataService(userId: number) {
