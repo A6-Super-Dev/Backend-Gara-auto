@@ -26,6 +26,12 @@ router.patch(
   wrapper(ClientController.updateReaction)
 );
 
+router.get(
+  '/filter-car/get-attributes/:brand',
+  wrapper(ClientController.getAllFilterAttribute)
+);
+router.post('/filter-car', wrapper(ClientController.filterCar));
+
 router.get('/blog', wrapper(ClientController.getAllBlogs));
 router.get('/blog/:id', wrapper(ClientController.getBlogById));
 router.get('/blog/offset/:offset', wrapper(ClientController.getBlogByOffset));
