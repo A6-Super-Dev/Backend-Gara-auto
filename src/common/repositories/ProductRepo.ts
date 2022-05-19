@@ -16,15 +16,13 @@ class ProductRepository {
     });
   };
 
-  getCarById = async (id: string) => {
+  getCarById = async (id: number) => {
     return CarModel.findOne({
       include: {
         model: CarAppearanceModel,
         as: 'carAppearance',
       },
-      where: {
-        id: id,
-      },
+      offset: id,
     });
   };
 
@@ -39,6 +37,7 @@ class ProductRepository {
       },
     });
   };
+
   getCarsByBrandId = async (id: number) => {
     return CarModel.findAll({
       include: {
@@ -47,6 +46,13 @@ class ProductRepository {
       },
       where: {
         brandId: id,
+      },
+    });
+  };
+  getAmountOfCars = async (brandId: number) => {
+    return CarModel.count({
+      where: {
+        brandId,
       },
     });
   };
