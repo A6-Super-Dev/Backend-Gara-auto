@@ -52,3 +52,39 @@ export const convertToUSD = (money: string) => {
 
   return result;
 };
+
+export const convertToVND = (money: string) => {
+  if (money === 'Đang cập nhật') return money;
+  const [moneyString, type] = money.split(' ');
+  let result = money;
+  if (type === 'USD') {
+    const moneyNumber = parseInt(moneyString.split(',').join(''));
+
+    result = numberWithCommas(moneyNumber * 25000) + ' VND';
+  }
+
+  return result;
+};
+
+export const convertMoneyStringToNumber = (money: string) => {
+  const removeComma = money.replaceAll(',', '');
+  const removeUSD = removeComma.replaceAll('USD', '');
+  return Number(removeUSD);
+};
+
+export const convertPriceStringToFilterType = (price: string) => {
+  let priceFromMinToMax = [];
+  if (price.includes('Under')) {
+    const underPrice = price.replace('Under ', '');
+    priceFromMinToMax.push('0 USD');
+    priceFromMinToMax.push(underPrice);
+    return priceFromMinToMax;
+  }
+  if (price.includes('Over')) {
+    const overPrice = price.replace('Over ', '');
+    priceFromMinToMax.push(overPrice);
+    priceFromMinToMax.push('10,000,000USD');
+    return priceFromMinToMax;
+  }
+  return (priceFromMinToMax = price.split(' to '));
+};
