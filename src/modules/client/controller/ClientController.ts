@@ -33,15 +33,43 @@ class ClientController extends ClientService {
   };
 
   getCar = async (_req: Request, res: Response) => {
+    const brand: string = _req.params.brand;
     const name: string = _req.params.name;
     const id: number = +_req.params.id;
     try {
-      const [carInfo, comments, commentReactions] = await Promise.all([
-        ProductRepo.getCarByName(name),
-        CarCommentRepo.getAllCommentInCar(id),
-        UserCommentReactionRepo.getAllReactionsInCar(id),
-      ]);
-      res.json({ status: 'success', carInfo, comments, commentReactions });
+      const brandInfo = await BrandRepo.getBrandByName(brand);
+      const [carInfo, numOfCarsInSameBrand, comments, commentReactions] =
+        await Promise.all([
+          ProductRepo.getCarByName(name),
+          ProductRepo.getAmountOfCars(brandInfo.id),
+          CarCommentRepo.getAllCommentInCar(id),
+          UserCommentReactionRepo.getAllReactionsInCar(id),
+        ]);
+      const relatedCarIds = [-7, -5, 13, 22].map((el: number) => {
+        return Math.abs(carInfo.id - el + 10) % numOfCarsInSameBrand;
+      });
+      const relatedBlogIds = [-5, -3, 7, 12].map((el: number) => {
+        return Math.abs(carInfo.id - el + 10) % 107;
+      });
+
+      const relatedCars = await Promise.all(
+        relatedCarIds.map((carId: number) => {
+          return ProductRepo.getCarById(carId);
+        })
+      );
+      const relatedBlogs = await Promise.all(
+        relatedBlogIds.map((blogId: number) => {
+          return BlogRepo.getBlogByOffset(blogId);
+        })
+      );
+      res.json({
+        status: 'success',
+        carInfo,
+        comments,
+        commentReactions,
+        relatedCars,
+        relatedBlogs,
+      });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getCar()' });
       throw new InternalServerError();
@@ -52,7 +80,7 @@ class ClientController extends ClientService {
     const id: string = _req.params.carId;
     try {
       const [carInfo, comments] = await Promise.all([
-        ProductRepo.getCarById(id),
+        ProductRepo.getCarById(+id),
         CarCommentRepo.getAllCommentInCar(+id),
       ]);
       res.json({ status: 'success', carInfo, comments });
@@ -171,10 +199,11 @@ class ClientController extends ClientService {
 
   createComment = async (req: Request, res: Response) => {
     const comment: CarCommentCreation = req.body;
+    comment.userId = req.user.id;
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const temp: any = await CarCommentRepo.createComment(comment);
-      const userIdCreatedComment = temp.userId;
+      const userIdCreatedComment = comment.userId;
       const userInfo = await UserRepo.findUserInfosById(userIdCreatedComment);
       const newCreatedComment = { ...temp.dataValues };
       newCreatedComment.userInfo = userInfo;
@@ -204,7 +233,8 @@ class ClientController extends ClientService {
   };
 
   createNewReaction = async (req: Request, res: Response) => {
-    const { userId, commentId, carId, like = 0, dislike = 0 } = req.body;
+    const { commentId, carId, like = 0, dislike = 0 } = req.body;
+    const userId = req.user.id;
     try {
       const result = await UserCommentReactionRepo.createReaction({
         userId,
@@ -223,7 +253,8 @@ class ClientController extends ClientService {
   };
 
   updateReaction = async (req: Request, res: Response) => {
-    const { userId, commentId, carId, like = 0, dislike = 0 } = req.body;
+    const { commentId, carId, like = 0, dislike = 0 } = req.body;
+    const userId = req.user.id;
     try {
       const result = await UserCommentReactionRepo.updateReaction(
         {
