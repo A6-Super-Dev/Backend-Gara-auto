@@ -14,13 +14,35 @@ const router = express.Router();
 router.get('/brand/get-all', wrapper(ClientController.getAllBrand));
 router.get('/brand/:brand', wrapper(ClientController.getBrandInfo));
 
-router.post('/car/rating', wrapper(ClientController.ratingCar));
+router.post(
+  '/cars/rating',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.ratingCars)
+);
+router.post(
+  '/car/rating',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.ratingCar)
+);
+router.get('/car/rating', wrapper(ClientController.getCarRating));
+
 router.get('/car/get-all', wrapper(ClientController.getAllCars));
 router.get('/car/get-one/:brand/:name/:id', wrapper(ClientController.getCar));
 router.get('/car/:carId', wrapper(ClientController.getCarById));
 router.get('/car/brand/:brand', wrapper(ClientController.getCarsByBrand));
 
 router.get('/car/comment/:carId', wrapper(ClientController.getCarComments));
+router.get('/car/comment', wrapper(ClientController.getCarComments));
+router.delete(
+  '/car/comment/:id',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.deleteComment)
+);
+router.patch(
+  '/car/comment',
+  [validateExpiryToken, authentication, customAuthorizer],
+  wrapper(ClientController.updateComment)
+);
 router.post(
   '/car/comment',
   [validateExpiryToken, authentication, customAuthorizer],

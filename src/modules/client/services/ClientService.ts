@@ -14,6 +14,8 @@ import BrandRepo from '../../../common/repositories/BrandRepo';
 import UserCarRatingRepo from '../../../common/repositories/UserCarRatingRepo';
 import UserRepo from '../../../common/repositories/UserRepo';
 import {
+  CarCommentAttributes,
+  CarCommentDeletingAttributes,
   PaymentReceipt,
   ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
@@ -27,6 +29,7 @@ import WishListModel from '../../../common/models/WishListModel';
 import CarRepo from '../../../common/repositories/CarRepo';
 import Cloudinary from '../../../common/services/Cloudinary';
 import fs from 'fs';
+import CarCommentRepo from '../../../common/repositories/CarCommentRepo';
 
 class ClientService {
   async rateManyCars(ratingInfos: Array<UserCarRatingCreation>) {
@@ -39,7 +42,7 @@ class ClientService {
         customCarRating.userId = getRandomBetween(30, 61);
         /* eslint-disable  @typescript-eslint/no-explicit-any */
         customCarRating.ratingPoint = convertIntToFloat(
-          getRandomBetween(7, 11),
+          getRandomBetween(2, 6),
           1
         ) as any;
         carRatings = [...carRatings, customCarRating];
@@ -52,8 +55,31 @@ class ClientService {
     );
     return 'query has been executed';
   }
-  rateCar(carRating: UserCarRatingCreation) {
-    return UserCarRatingRepo.carRating(carRating);
+  async rateCar(carRating: UserCarRatingCreation) {
+    const findExistedRating = await UserCarRatingRepo.getExistedRating(
+      carRating.carId,
+      carRating.userId
+    );
+    if (findExistedRating) {
+      await UserCarRatingRepo.carUpdateRating(carRating);
+      return await UserCarRatingRepo.findUpdatedRating(
+        carRating.carId,
+        carRating.userId
+      );
+    } else {
+      return UserCarRatingRepo.createCarRating(carRating);
+    }
+  }
+
+  updateRatingCar(carRating: UserCarRatingCreation) {
+    return UserCarRatingRepo.carUpdateRating(carRating);
+  }
+
+  deleteCommentService(datas: CarCommentDeletingAttributes) {
+    return CarCommentRepo.deleteComment(datas);
+  }
+  updateCommentService(datas: CarCommentAttributes) {
+    return CarCommentRepo.updateComment(datas);
   }
 
   protected async updateClientInfoService(

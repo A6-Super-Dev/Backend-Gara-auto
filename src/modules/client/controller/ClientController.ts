@@ -9,17 +9,32 @@ import ProductRepo from '../../../common/repositories/ProductRepo';
 import UserRepo from '../../../common/repositories/UserRepo';
 import UserCommentReactionRepo from '../../../common/repositories/UserCommentReactionRepo';
 import {
+  CarCommentAttributes,
   CarCommentCreation,
   ProcessPaymentBodyRequest,
   UpdateClientInfoAttributes,
   UpdateWishlistRequest,
 } from '../../../common/types/common';
 import ClientService from '../services/ClientService';
+import UserCarRatingRepo from '../../../common/repositories/UserCarRatingRepo';
 
 class ClientController extends ClientService {
-  ratingCar = async (req: Request, res: Response) => {
-    const msg = await this.rateManyCars(req.body);
+  ratingCars = async (req: Request, res: Response) => {
+    const msg = await this.rateManyCars([]);
     res.json({ status: 'success', msg });
+  };
+
+  ratingCar = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const { carId, ratingPoint } = req.body;
+    const result = await this.rateCar({ carId, userId, ratingPoint });
+    res.json({ status: 'success', result });
+  };
+
+  getCarRating = async (req: Request, res: Response) => {
+    const carId = 3;
+    const result = await UserCarRatingRepo.getRatingPoints(carId);
+    res.json({ status: 'success', result });
   };
 
   getAllCars = async (_req: Request, res: Response) => {
@@ -38,13 +53,19 @@ class ClientController extends ClientService {
     const id: number = +_req.params.id;
     try {
       const brandInfo = await BrandRepo.getBrandByName(brand);
-      const [carInfo, numOfCarsInSameBrand, comments, commentReactions] =
-        await Promise.all([
-          ProductRepo.getCarByName(name),
-          ProductRepo.getAmountOfCars(brandInfo.id),
-          CarCommentRepo.getAllCommentInCar(id),
-          UserCommentReactionRepo.getAllReactionsInCar(id),
-        ]);
+      const [
+        carInfo,
+        numOfCarsInSameBrand,
+        comments,
+        commentReactions,
+        ratingPoints,
+      ] = await Promise.all([
+        ProductRepo.getCarByName(name),
+        ProductRepo.getAmountOfCars(brandInfo.id),
+        CarCommentRepo.getAllCommentInCar(id),
+        UserCommentReactionRepo.getAllReactionsInCar(id),
+        UserCarRatingRepo.getRatingPoints(id),
+      ]);
       const relatedCarIds = [-7, -5, 13, 22].map((el: number) => {
         return Math.abs(carInfo.id - el + 10) % numOfCarsInSameBrand;
       });
@@ -69,6 +90,7 @@ class ClientController extends ClientService {
         commentReactions,
         relatedCars,
         relatedBlogs,
+        ratingPoints,
       });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getCar()' });
@@ -261,6 +283,37 @@ class ClientController extends ClientService {
         UserCommentReactionRepo.getAllReactionsInCar(+carId),
       ]);
       res.json({ status: 'success', result, carComments });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getCarComments()' });
+      throw new InternalServerError(
+        `creating comment failed at getCarComments()`
+      );
+    }
+  };
+
+  deleteComment = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const { id } = req.params;
+    const result = await this.deleteCommentService({
+      userId,
+      id: +id,
+    });
+    try {
+      res.json({ status: 'success', result });
+    } catch (error) {
+      logger.error(error, { reason: 'EXCEPTION at getCarComments()' });
+      throw new InternalServerError(
+        `creating comment failed at getCarComments()`
+      );
+    }
+  };
+  updateComment = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const comment: CarCommentAttributes = req.body;
+    comment.userId = userId;
+    const result = await this.updateCommentService(comment);
+    try {
+      res.json({ status: 'success', result });
     } catch (error) {
       logger.error(error, { reason: 'EXCEPTION at getCarComments()' });
       throw new InternalServerError(

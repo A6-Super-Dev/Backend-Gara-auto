@@ -9,10 +9,7 @@ import CarModel from './CarModel';
 
 class UserCarRatingModel extends Model<
   UserCarRatingAttributes | UserCarRatingCreation
-> {
-  id: number;
-  name: string;
-}
+> {}
 
 UserCarRatingModel.init(
   {
@@ -25,19 +22,11 @@ UserCarRatingModel.init(
     carId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: CarModel,
-        key: 'id',
-      },
       field: 'car_id',
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: UserModel, // 'Movies' would also work
-        key: 'id',
-      },
       field: 'user_id',
     },
     ratingPoint: {
@@ -53,7 +42,15 @@ UserCarRatingModel.init(
   }
 );
 
-CarModel.belongsToMany(UserModel, { through: UserCarRatingModel });
-UserModel.belongsToMany(CarModel, { through: UserCarRatingModel });
+CarModel.belongsToMany(UserModel, {
+  through: UserCarRatingModel,
+  as: 'car',
+  foreignKey: 'id',
+});
+UserModel.belongsToMany(CarModel, {
+  through: UserCarRatingModel,
+  as: 'user',
+  foreignKey: 'id',
+});
 
 export default UserCarRatingModel;
