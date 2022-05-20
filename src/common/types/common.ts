@@ -135,8 +135,12 @@ export interface CarCommentAttributes {
   comment: string;
   mom: string;
   userId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+export interface CarCommentDeletingAttributes {
+  id: number;
+  userId: number;
 }
 export type CarCommentCreation = Omit<CarCommentAttributes, 'id'>;
 export interface UserCommentReactionAttributes {
