@@ -1,10 +1,15 @@
 import { WhereOptions } from 'sequelize';
+import CarAppearanceModel from '../models/CarAppearanceModel';
 import CarModel from '../models/CarModel';
 import { CarAttributes } from '../types/common';
 
 class CarRepository {
   async filterBodyTypeAndSeat(conditions: WhereOptions<CarAttributes>) {
     return CarModel.findAll({
+      include: {
+        model: CarAppearanceModel,
+        as: 'carAppearance',
+      },
       where: conditions,
     });
   }
