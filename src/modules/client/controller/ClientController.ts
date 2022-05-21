@@ -179,12 +179,24 @@ class ClientController extends ClientService {
     try {
       const { id } = await BrandRepo.getBrandByName(brandName);
       if (id) {
-        const filterCar = await this.filterCarByDesignTypeService(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tempFilterCar: any = await this.filterCarByDesignTypeService(
           id,
           designType,
           price,
           seat,
           radio
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let filterCar = JSON.parse(JSON.stringify(tempFilterCar));
+
+        filterCar = await Promise.all(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          filterCar.map(async (el: any) => {
+            const ratingPoints = await UserCarRatingRepo.getRatingPoints(el.id);
+            el.ratingPoints = ratingPoints;
+            return el;
+          })
         );
         res.json({ success: true, filterCar });
       }
