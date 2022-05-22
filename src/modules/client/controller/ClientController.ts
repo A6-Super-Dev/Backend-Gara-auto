@@ -48,9 +48,11 @@ class ClientController extends ClientService {
   };
 
   getCar = async (_req: Request, res: Response) => {
-    const brand: string = _req.params.brand;
+    let brand: string = _req.params.brand;
     const name: string = _req.params.name;
     const id: number = +_req.params.id;
+    if (brand === 'mercedes-benz') brand = 'mercedes';
+    if (brand === 'rolls') brand = 'rolls royce';
     try {
       const brandInfo = await BrandRepo.getBrandByName(brand);
       const [
